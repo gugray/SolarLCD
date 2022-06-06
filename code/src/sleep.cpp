@@ -14,10 +14,10 @@ uint8_t lastSleepLength = 255;
 
 void setupWatchdog(uint8_t sleepLength)
 {
-  if (sleepLength == lastSleepLength)
-    return;
+  if (sleepLength == lastSleepLength) return;
+  else lastSleepLength = sleepLength;
 
-  uint8_t b = lastSleepLength & 7;
+  uint8_t b = sleepLength & 7;
   if (sleepLength > 7)
     b |= (1 << 5);
   b |= (1 << WDCE);

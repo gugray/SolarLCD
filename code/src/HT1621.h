@@ -20,8 +20,7 @@ private:
 	int dataPin;
 
 public:
-	// TODO: uint8_t
-	char buffer[HT1621_BUFSZ];
+	uint8_t buffer[HT1621_BUFSZ];
 
 private:
 	void wrData(uint8_t data, uint8_t cnt);

@@ -10,16 +10,14 @@ Copyright 2022 Gabor L Ugray (changes; reduced scope)
 #include <Arduino.h>
 #include "HT1621.h"
 
-// TODO: keep only binary form
-
-#define  BIAS     0x52             //0b1000 0101 0010  1/3 duty 4 commons
-#define  SYSDIS   0X00             //0b1000 0000 0000  关振系统荡器和LCD偏压发生器 ~ disable sys oscillator and LCD bias
-#define  SYSEN    0X02             //0b1000 0000 0010  打开系统振荡器 ~ enable system oscillator
-#define  LCDOFF   0X04             //0b1000 0000 0100  关LCD偏压 ~ disable LCD bias generator
-#define  LCDON    0X06             //0b1000 0000 0110  打开LCD偏压 ~ enable LCD bias generator
-#define  XTAL     0x28             //0b1000 0010 1000  外部接时钟 ~ external quartz crystal
-#define  RC256    0X30             //0b1000 0011 0000  内部时钟 ~ internal RC oscillator
-#define  WDTDIS1  0X0A             //0b1000 0000 1010  禁止看门狗 ~ disable watchdog timer
+#define  BIAS     0b01010010  // 1/3 duty 4 commons
+#define  SYSDIS   0b00000000  // 关振系统荡器和LCD偏压发生器 ~ disable sys oscillator and LCD bias
+#define  SYSEN    0b00000010  // 打开系统振荡器 ~ enable system oscillator
+#define  LCDOFF   0b00000100  // 关LCD偏压 ~ disable LCD bias generator
+#define  LCDON    0b00000110  // 打开LCD偏压 ~ enable LCD bias generator
+#define  XTAL     0b00101000  // 外部接时钟 ~ external quartz crystal
+#define  RC256    0b00110000  // 内部时钟 ~ internal RC oscillator
+#define  WDTDIS1  0b00001010  // 禁止看门狗 ~ disable watchdog timer
 
 HT1621::HT1621()
 {
