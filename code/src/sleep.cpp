@@ -22,11 +22,23 @@ void setupWatchdog(uint8_t sleepLength)
     b |= (1 << 5);
   b |= (1 << WDCE);
   MCUSR &= ~(1 << WDRF);
+
+  // On Attiny, this is WDTCR
+  // On Atmega (Nano), it's WDTCSR
+#ifdef ENV_ATTINY
   // start timed sequence
   WDTCR |= (1 << WDCE) | (1 << WDE);
   // set new watchdog timeout value
   WDTCR = b;
   WDTCR |= _BV(WDIE);
+#endif
+#ifdef ENV_NANO
+  // start timed sequence
+  WDTCSR |= (1 << WDCE) | (1 << WDE);
+  // set new watchdog timeout value
+  WDTCSR = b;
+  WDTCSR |= _BV(WDIE);
+#endif
 }
 
 // Watchdog Interrupt Service / is executed when watchdog timed out

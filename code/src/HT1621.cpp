@@ -9,6 +9,7 @@ Copyright 2022 Gabor L Ugray (changes; reduced scope)
 
 #include <Arduino.h>
 #include "HT1621.h"
+#include "magic.h"
 
 #define  BIAS     0b01010010  // 1/3 duty 4 commons
 #define  SYSDIS   0b00000000  // 关振系统荡器和LCD偏压发生器 ~ disable sys oscillator and LCD bias
@@ -29,16 +30,12 @@ void HT1621::clearBuffer()
 	memset(&buffer[0], 0, HT1621_BUFSZ);
 }
 
-void HT1621::begin(uint8_t csPin, uint8_t wrPin, uint8_t dataPin)
+void HT1621::begin()
 {
-	// Store pins
-	this->csPin = csPin;
-	this->wrPin = wrPin;
-	this->dataPin = dataPin;
 	// Using them as output
-	pinMode(csPin, OUTPUT);
-	pinMode(wrPin, OUTPUT);
-	pinMode(dataPin, OUTPUT);
+	pinMode(PIN_CS, OUTPUT);
+	pinMode(PIN_WR, OUTPUT);
+	pinMode(PIN_DATA, OUTPUT);
 	// Init sequence
 	wrCmd(BIAS);
 	wrCmd(RC256);
@@ -50,11 +47,11 @@ void HT1621::begin(uint8_t csPin, uint8_t wrPin, uint8_t dataPin)
 	uint8_t i, addr;
 	for (i = 0, addr = 0; i < 16; i++)
 	{
-		digitalWrite(csPin, LOW);
+		digitalWrite(PIN_CS, LOW);
 		wrData(0xa0, 3);
 		wrData((addr << 2), 6);
 		wrData(0, 8);
-		digitalWrite(csPin, HIGH);
+		digitalWrite(PIN_CS, HIGH);
 		addr = addr + 2;
 	}
 }
@@ -64,17 +61,10 @@ void HT1621::wrData(uint8_t data, uint8_t cnt)
 	uint8_t i;
 	for (i = 0; i < cnt; i++)
 	{
-		digitalWrite(wrPin, LOW);
+		digitalWrite(PIN_WR, LOW);
 		delayMicroseconds(4);
-		if (data & 0x80)
-		{
-			digitalWrite(dataPin, HIGH);
-		}
-		else
-		{
-			digitalWrite(dataPin, LOW);
-		}
-		digitalWrite(wrPin, HIGH);
+		digitalWrite(PIN_DATA, (data & 0x80) ? HIGH : LOW);
+		digitalWrite(PIN_WR, HIGH);
 		delayMicroseconds(4);
 		data <<= 1;
 	}
@@ -94,32 +84,31 @@ void HT1621::setEnabled(bool enabled)
 	}
 }
 
-void HT1621::wrBufPos(uint8_t addr, uint8_t segData)
+void HT1621::wrCmd(uint8_t cmd)
 {
-	addr <<= 2;
-	digitalWrite(csPin, LOW);
+	digitalWrite(PIN_CS, LOW);
+	wrData(0x80, 4);
+	wrData(cmd, 8);
+	digitalWrite(PIN_CS, HIGH);
+}
+
+void HT1621::wrBufPos(uint8_t ix)
+{
+	uint8_t segData = buffer[ix];
+	uint8_t addr = 3 - ix;
+	addr <<= 3;
+	digitalWrite(PIN_CS, LOW);
 	wrData(0xa0, 3);
 	wrData(addr, 6);
 	wrData(segData, 8);
-	digitalWrite(csPin, HIGH);
-}
-
-void HT1621::wrCmd(uint8_t cmd)
-{ // 100
-	digitalWrite(csPin, LOW);
-	wrData(0x80, 4);
-	wrData(cmd, 8);
-	digitalWrite(csPin, HIGH);
+	digitalWrite(PIN_CS, HIGH);
 }
 
 // takes the buffer and puts it straight into the driver
-void HT1621::witeBuffer()
+void HT1621::wrBuffer()
 {
-	// the buffer is backwards with respect to the lcd. could be improved
-	wrBufPos(0, buffer[5]);
-	wrBufPos(2, buffer[4]);
-	wrBufPos(4, buffer[3]);
-	wrBufPos(6, buffer[2]);
-	wrBufPos(8, buffer[1]);
-	wrBufPos(10, buffer[0]);
+	wrBufPos(0);
+	wrBufPos(1);
+	wrBufPos(2);
+	wrBufPos(3);
 }

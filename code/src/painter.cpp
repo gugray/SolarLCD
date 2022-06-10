@@ -73,4 +73,13 @@ void Painter::setDot(uint8_t dot)
   buf[0] |= b0;
 }
 
-
+void Painter::setSeg(uint8_t digitIx, uint8_t segIx)
+{
+  if (segIx == 0) buf[3] |= (0x80 >> digitIx);
+  else if (segIx == 1) buf[1] |= (0x08 >> digitIx);
+  else if (segIx == 2) buf[3] |= (0x08 >> digitIx);
+  else if (segIx == 3) buf[0] |= (0x80 >> digitIx);
+  else if (segIx == 4) buf[1] |= (0x80 >> digitIx);
+  else if (segIx == 5) buf[2] |= (0x80 >> digitIx);
+  else if (segIx == 6) buf[2] |= (0x08 >> digitIx);
+}
