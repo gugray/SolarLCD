@@ -5,12 +5,21 @@
 #include "vcc.h"
 #include "magic.h"
 
+#define VCC_MEASURE_N_HALFSEC   240   // Every 2 minutes
+#define VCC_MEASURE_N_32MSEC    15    // Every 480 msec ~ half sec
+
 LoopFun currentLoopFun;
 bool lcdOn = true;
 bool dotShown = false;
+int16_t lastVcc = 0, vcc = 0;
+uint16_t counter = 0;
 
+// Number of loops since last measurement
+// In low-voltage loop, cycles are 8 sec, and measurements very rare
+// In high-voltage loop, cycles are 32 msec
+uint16_t vccMeasureCycle = 0;
 
-void drawVoltage(int num)
+void drawVoltage(int num, bool showDecimalPoint)
 {
   int val = num;
   int n = val % 10;
@@ -25,59 +34,109 @@ void drawVoltage(int num)
   n = val % 10;
   if (val != 0) painter.setDigit(n, 3);
 
-  painter.setDot(2);
+  if (showDecimalPoint) painter.setDot(2);
 }
 
+void measureVcc()
+{
+    lastVcc = vcc;
+    vcc = get_vcc();
+    vccMeasureCycle = 0;
+}
+
+void startupLoop()
+{
+  measureVcc();
+  if (vcc < MID_VCC_THRESHOLD)
+    currentLoopFun = lowVoltageLoop;
+  else if (vcc < HIGH_VCC_THRESHOLD)
+    currentLoopFun = midVoltageLoop;
+  else
+    currentLoopFun = highVoltageLoop;
+}
 
 void lowVoltageLoop()
 {
-  int16_t vcc = get_vcc();
-  ht1621.clearBuffer();
+  if (vccMeasureCycle >= VCC_MEASURE_N_HALFSEC)
+    measureVcc();
 
   // If voltage is now above threshold: change mode
-  if (vcc > BLINK_THRESHOLD_VCC)
+  if (vcc > MID_VCC_THRESHOLD + VCC_HALF_HYSTERESIS)
   {
-    currentLoopFun = goodVoltageLoop;
+    currentLoopFun = midVoltageLoop;
     return;
   }
 
-  // If voltage tooooo low, no LCD
-  if (vcc >= LCD_THRESHOLD_VCC)
+  // Blink, unless voltage is growing
+  if (vcc <= lastVcc)
   {
-    if (!lcdOn) ht1621.setEnabled(true);
-    drawVoltage(vcc);
-    ht1621.wrBuffer();
-    sleep(5); // 500 msec
-    ht1621.setEnabled(false);
-    lcdOn = false;
+    digitalWrite(PIN_LED, HIGH);
+    sleep(0); // 16 msec
+    digitalWrite(PIN_LED, LOW);
   }
-  if (vcc >= LCD_THRESHOLD_VCC) sleep(8); // 4 sec
-  else sleep(9); // 8 sec
-  digitalWrite(PIN_LED, HIGH);
-  sleep(0); // 16 msec
-  digitalWrite(PIN_LED, LOW);
+
+  // Sleep
+  vccMeasureCycle += 16;
+  sleep(9); // 8 sec
+}
+
+void midVoltageLoop()
+{
+  measureVcc();
+
+  // If voltage is now below threshold: change mode
+  if (vcc < MID_VCC_THRESHOLD - VCC_HALF_HYSTERESIS)
+  {
+    currentLoopFun = lowVoltageLoop;
+    vccMeasureCycle = 1;
+    return;
+  }
+  // If voltage is now above high threshold: change mode
+  if (vcc > HIGH_VCC_THRESHOLD + VCC_HALF_HYSTERESIS)
+  {
+    currentLoopFun = highVoltageLoop;
+    return;
+  }
+
+  ht1621.clearBuffer();
+  if (!lcdOn) ht1621.setEnabled(true);
+  lcdOn = true;
+  drawVoltage(vcc, true);
+  dotShown = !dotShown;
+  if (dotShown) painter.setDot(1);
+  ht1621.wrBuffer();
   sleep(5); // 500 msec
 }
 
-void goodVoltageLoop()
+void highVoltageLoop()
 {
-  int16_t vcc = get_vcc();
-  ht1621.clearBuffer();
+  if (vccMeasureCycle >= VCC_MEASURE_N_32MSEC)
+    measureVcc();
 
   // If voltage is now below threshold: change mode
-  if (vcc <= BLINK_THRESHOLD_VCC)
+  if (vcc < HIGH_VCC_THRESHOLD - VCC_HALF_HYSTERESIS)
   {
-    currentLoopFun = lowVoltageLoop;
+    currentLoopFun = midVoltageLoop;
+    vccMeasureCycle = 1;
     return;
   }
 
-  if (!lcdOn) ht1621.setEnabled(true);
-  lcdOn = true;
-  drawVoltage(vcc);
-  if (!dotShown) painter.setDot(1);
-  dotShown = !dotShown;
-  ht1621.wrBuffer();
-  sleep(5); // 500 msec
+  // About four times a second, we update display
+  if (counter == 8)
+  {
+    counter = 0;
+    ht1621.clearBuffer();
+    if (!lcdOn) ht1621.setEnabled(true);
+    lcdOn = true;
+    dotShown = !dotShown;
+    drawVoltage(vcc, !dotShown);
+    if (dotShown) painter.setDot(1);
+    ht1621.wrBuffer();
+  }
+
+  // Sleep 32 msec, increase counter
+  sleep(1);
+  ++counter;
 }
 
 void smileyLoop()

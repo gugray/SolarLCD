@@ -4,8 +4,10 @@
 typedef void (*LoopFun)();
 extern LoopFun currentLoopFun;
 
+void startupLoop();
 void lowVoltageLoop();
-void goodVoltageLoop();
+void midVoltageLoop();
+void highVoltageLoop();
 void smileyLoop();
 
 #endif

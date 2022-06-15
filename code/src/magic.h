@@ -3,8 +3,9 @@
 
 
 
-#define BLINK_THRESHOLD_VCC   300
-#define LCD_THRESHOLD_VCC     240
+#define VCC_HALF_HYSTERESIS   3
+#define MID_VCC_THRESHOLD     320
+#define HIGH_VCC_THRESHOLD    390
 
 
 #ifdef ENV_ATTINY

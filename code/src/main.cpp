@@ -8,7 +8,7 @@ void setup()
   ht1621.begin();
   pinMode(PIN_LED, OUTPUT);
   digitalWrite(PIN_LED, LOW);
-  currentLoopFun = smileyLoop;
+  currentLoopFun = startupLoop;
 }
 
 void loop()
