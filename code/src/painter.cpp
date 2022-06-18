@@ -1,85 +1,106 @@
 #include <Arduino.h>
 #include "painter.h"
 
-#define D0_B0  0b00000000
-#define D0_B1  0b00010001
-#define D0_B2  0b00010001
-#define D0_B3  0b00010001
-#define D1_B0  0b00000000
-#define D1_B1  0b00000000
-#define D1_B2  0b00010000
-#define D1_B3  0b00000001
-#define D2_B0  0b00010000
-#define D2_B1  0b00010000
-#define D2_B2  0b00000001
-#define D2_B3  0b00010001
-#define D3_B0  0b00010000
-#define D3_B1  0b00000000
-#define D3_B2  0b00010001
-#define D3_B3  0b00010001
-#define D4_B0  0b00010000
-#define D4_B1  0b00000001
-#define D4_B2  0b00010000
-#define D4_B3  0b00000001
-#define D5_B0  0b00010000
-#define D5_B1  0b00000001
-#define D5_B2  0b00010001
-#define D5_B3  0b00010000
-#define D6_B0  0b00010000
-#define D6_B1  0b00010001
-#define D6_B2  0b00010001
-#define D6_B3  0b00010000
-#define D7_B0  0b00000000
-#define D7_B1  0b00000000
-#define D7_B2  0b00010000
-#define D7_B3  0b00010001
-#define D8_B0  0b00010000
-#define D8_B1  0b00010001
-#define D8_B2  0b00010001
-#define D8_B3  0b00010001
-#define D9_B0  0b00010000
-#define D9_B1  0b00000001
-#define D9_B2  0b00010000
-#define D9_B3  0b00010001
-
-
 Painter::Painter(uint8_t *buf)
 : buf(buf)
 {
 }
 
-void Painter::setDigit(int num, int rofs)
+void Painter::setDigit(uint8_t digit, uint8_t val)
 {
-  uint8_t b0, b1, b2, b3;
-  if (num == 0) { b0 = D0_B0; b1 = D0_B1; b2 = D0_B2; b3 = D0_B3; }
-  else if (num == 1) { b0 = D1_B0; b1 = D1_B1; b2 = D1_B2; b3 = D1_B3; }
-  else if (num == 2) { b0 = D2_B0; b1 = D2_B1; b2 = D2_B2; b3 = D2_B3; }
-  else if (num == 3) { b0 = D3_B0; b1 = D3_B1; b2 = D3_B2; b3 = D3_B3; }
-  else if (num == 4) { b0 = D4_B0; b1 = D4_B1; b2 = D4_B2; b3 = D4_B3; }
-  else if (num == 5) { b0 = D5_B0; b1 = D5_B1; b2 = D5_B2; b3 = D5_B3; }
-  else if (num == 6) { b0 = D6_B0; b1 = D6_B1; b2 = D6_B2; b3 = D6_B3; }
-  else if (num == 7) { b0 = D7_B0; b1 = D7_B1; b2 = D7_B2; b3 = D7_B3; }
-  else if (num == 8) { b0 = D8_B0; b1 = D8_B1; b2 = D8_B2; b3 = D8_B3; }
-  else if (num == 9) { b0 = D9_B0; b1 = D9_B1; b2 = D9_B2; b3 = D9_B3; }
-  buf[0] |= (b0 << rofs);
-  buf[1] |= (b1 << rofs);
-  buf[2] |= (b2 << rofs);
-  buf[3] |= (b3 << rofs);
+  uint8_t mask;
+  switch (val)
+  {
+  case 0:
+    mask = SG_TP | SG_TL | SG_TR | SG_BL | SG_BR | SG_BM;
+    break;
+  case 1:
+    mask = SG_TR | SG_BR;
+    break;
+  case 2:
+    mask = SG_TP | SG_TR | SG_MD | SG_BL | SG_BM;
+    break;
+  case 3:
+    mask = SG_TP | SG_TR | SG_MD | SG_BR | SG_BM;
+    break;
+  case 4:
+    mask = SG_TL | SG_TR | SG_MD | SG_BR;
+    break;
+  case 5:
+    mask = SG_TP | SG_TL | SG_MD | SG_BR | SG_BM;
+    break;
+  case 6:
+    mask = SG_TP | SG_TL | SG_MD | SG_BL | SG_BR | SG_BM;
+    break;
+  case 7:
+    mask = SG_TP | SG_TR | SG_BR;
+    break;
+  case 8:
+    mask = SG_TP | SG_TL | SG_TR | SG_MD | SG_BL | SG_BR | SG_BM;
+    break;
+  case 9:
+    mask = SG_TP | SG_TL | SG_TR | SG_MD | SG_BR;
+    break;
+  case '-':
+    mask = SG_MD;
+    break;
+  case 'E':
+    mask = SG_TP | SG_TL | SG_MD | SG_BL | SG_BM;
+    break;
+  case 'H':
+    mask = SG_TL | SG_TR | SG_MD | SG_BL | SG_BR;
+    break;
+  case 'L':
+    mask = SG_TL | SG_BL | SG_BM;
+    break;
+  case 'r':
+    mask = SG_MD | SG_BL;
+    break;
+  case 'u':
+    mask = SG_BL | SG_BR | SG_BM;
+    break;
+  default:
+    return;
+  }
+  setSegs(digit, mask);
 }
 
-void Painter::setDot(uint8_t dot)
+void Painter::setDots(uint8_t mask)
 {
-  uint8_t b0 = (1 << dot);
-  buf[0] |= b0;
+  if (mask & DT_LDEC) buf[0] |= 0x08;
+  if (mask & DT_MDEC) buf[0] |= 0x04;
+  if (mask & DT_MDOT) buf[0] |= 0x02;
+  if (mask & DT_DEGR) buf[0] |= 0x01;
 }
 
-void Painter::setSeg(uint8_t digitIx, uint8_t segIx)
+void Painter::setSegs(uint8_t digit, uint8_t mask)
 {
-  if (segIx == 0) buf[3] |= (0x80 >> digitIx);
-  else if (segIx == 1) buf[1] |= (0x08 >> digitIx);
-  else if (segIx == 2) buf[3] |= (0x08 >> digitIx);
-  else if (segIx == 3) buf[0] |= (0x80 >> digitIx);
-  else if (segIx == 4) buf[1] |= (0x80 >> digitIx);
-  else if (segIx == 5) buf[2] |= (0x80 >> digitIx);
-  else if (segIx == 6) buf[2] |= (0x08 >> digitIx);
+  if (mask & SG_TP) buf[3] |= (0x80 >> digit);
+  if (mask & SG_TL) buf[1] |= (0x08 >> digit);
+  if (mask & SG_TR) buf[3] |= (0x08 >> digit);
+  if (mask & SG_MD) buf[0] |= (0x80 >> digit);
+  if (mask & SG_BL) buf[1] |= (0x80 >> digit);
+  if (mask & SG_BR) buf[2] |= (0x80 >> digit);
+  if (mask & SG_BM) buf[2] |= (0x08 >> digit);
+}
+
+void Painter::setImage(Images img)
+{
+  switch (img)
+  {
+  case frog:
+    setSegs(0, SG_BL | SG_BM);
+    setSegs(1, SG_TP | SG_TL | SG_TR | SG_MD | SG_BM);
+    setSegs(2, SG_TP | SG_TL | SG_TR | SG_MD | SG_BM);
+    setSegs(3, SG_BR | SG_BM);
+    break;
+  case helo:
+    setDigit(0, 'H');
+    setDigit(1, 'E');
+    setDigit(2, 'L');
+    setDigit(3, 0);
+    break;
+  default:
+    return;
+  }
 }
