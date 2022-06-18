@@ -4,7 +4,7 @@
 
 
 #define VCC_HALF_HYSTERESIS   3
-#define MID_VCC_THRESHOLD     320
+#define MID_VCC_THRESHOLD     328
 #define HIGH_VCC_THRESHOLD    390
 
 

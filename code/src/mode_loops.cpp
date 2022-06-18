@@ -5,7 +5,7 @@
 #include "vcc.h"
 #include "magic.h"
 
-#define VCC_MEASURE_N_HALFSEC   240   // Every 2 minutes
+#define VCC_MEASURE_N_HALFSEC   1200  // Every 10 minutes
 #define VCC_MEASURE_N_32MSEC    15    // Every 480 msec ~ half sec
 
 LoopFun currentLoopFun;
@@ -18,6 +18,26 @@ uint16_t counter = 0;
 // In low-voltage loop, cycles are 8 sec, and measurements very rare
 // In high-voltage loop, cycles are 32 msec
 uint16_t vccMeasureCycle = 0;
+
+void measureVcc();
+
+void startupLoop()
+{
+  measureVcc();
+  if (vcc < MID_VCC_THRESHOLD)
+    currentLoopFun = lowVoltageLoop;
+  else if (vcc < HIGH_VCC_THRESHOLD)
+    currentLoopFun = midVoltageLoop;
+  else
+    currentLoopFun = highVoltageLoop;
+
+  // // DBG
+  // currentLoopFun = blinkeyLoop;
+  // ht1621.setEnabled(false);
+
+  // // DBG
+  // currentLoopFun = vccLoop;
+}
 
 void drawVoltage(int num, bool showDecimalPoint)
 {
@@ -40,19 +60,9 @@ void drawVoltage(int num, bool showDecimalPoint)
 void measureVcc()
 {
     lastVcc = vcc;
-    vcc = get_vcc();
+    vcc = get_vcc_ext();
+    //vcc = get_vcc();
     vccMeasureCycle = 0;
-}
-
-void startupLoop()
-{
-  measureVcc();
-  if (vcc < MID_VCC_THRESHOLD)
-    currentLoopFun = lowVoltageLoop;
-  else if (vcc < HIGH_VCC_THRESHOLD)
-    currentLoopFun = midVoltageLoop;
-  else
-    currentLoopFun = highVoltageLoop;
 }
 
 void lowVoltageLoop()
@@ -71,13 +81,13 @@ void lowVoltageLoop()
   if (vcc <= lastVcc)
   {
     digitalWrite(PIN_LED, HIGH);
-    sleep(0); // 16 msec
+    delay(8);
     digitalWrite(PIN_LED, LOW);
   }
 
   // Sleep
-  vccMeasureCycle += 16;
-  sleep(9); // 8 sec
+  vccMeasureCycle += 8;
+  sleep(8); // 4 sec
 }
 
 void midVoltageLoop()
@@ -95,6 +105,7 @@ void midVoltageLoop()
   if (vcc > HIGH_VCC_THRESHOLD + VCC_HALF_HYSTERESIS)
   {
     currentLoopFun = highVoltageLoop;
+    vccMeasureCycle = 1;
     return;
   }
 
@@ -134,10 +145,39 @@ void highVoltageLoop()
     ht1621.wrBuffer();
   }
 
-  // Sleep 32 msec, increase counter
+  // Sleep 32 msec, increase counters
   sleep(1);
   ++counter;
+  ++vccMeasureCycle;
 }
+
+void blinkeyLoop()
+{
+  digitalWrite(PIN_LED, HIGH);
+  delay(8);
+  digitalWrite(PIN_LED, LOW);
+
+  sleep(8); // 4 sec
+}
+
+// Clock prescaler
+// CLKPR = (1 << CLKPCE);
+// CLKPR = 0x00;
+
+
+void vccLoop()
+{
+  measureVcc();
+  ht1621.clearBuffer();
+  if (!lcdOn) ht1621.setEnabled(true);
+  lcdOn = true;
+  drawVoltage(vcc, true);
+  dotShown = !dotShown;
+  if (dotShown) painter.setDot(1);
+  ht1621.wrBuffer();
+  sleep(5); // 500 msec
+}
+
 
 void smileyLoop()
 {

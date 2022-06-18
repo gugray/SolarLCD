@@ -47,9 +47,15 @@ ISR(WDT_vect) {}
 void sleep(uint8_t sleepLength)
 {
   setupWatchdog(sleepLength);
-  set_sleep_mode(SLEEP_MODE_PWR_DOWN); // sleep mode is set here
+  ADCSRA = 0; // disable ADV
   sleep_enable();
-  sleep_mode();      // System sleeps here
-  sleep_disable();   // System continues execution here when watchdog timed out
-  sbi(ADCSRA, ADEN); // switch Analog to Digitalconverter ON
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+  
+  // This *should* work, but it messes up the MCU
+  // Investigate?
+  // MCUCR = bit(BODS) | bit(BODSE);     // turn on brown-out enable select
+  // MCUCR = bit(BODS);                  // this must be done within 4 clock cycles of above
+
+  sleep_mode();
+  sleep_disable(); // system continues execution here when watchdog timed out
 }

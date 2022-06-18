@@ -9,5 +9,7 @@ void lowVoltageLoop();
 void midVoltageLoop();
 void highVoltageLoop();
 void smileyLoop();
+void blinkeyLoop();
+void vccLoop();
 
 #endif
