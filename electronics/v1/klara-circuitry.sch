@@ -50,11 +50,7 @@ $EndComp
 Wire Wire Line
 	1500 2600 1500 1750
 Wire Wire Line
-	3900 3450 3900 4300
-Wire Wire Line
-	3900 4300 2900 4300
-Wire Wire Line
-	1500 4300 1500 2900
+	3900 3450 3900 3850
 Wire Wire Line
 	1500 1750 1650 1750
 $Comp
@@ -62,9 +58,10 @@ L Device:D_Zener D1
 U 1 1 62A6BF92
 P 2050 2750
 F 0 "D1" V 2004 2830 50  0000 L CNN
-F 1 "D_Zener" V 2095 2830 50  0000 L CNN
+F 1 "Zener" V 2095 2830 50  0000 L CNN
 F 2 "" H 2050 2750 50  0001 C CNN
 F 3 "~" H 2050 2750 50  0001 C CNN
+F 4 "5V" V 2188 2830 50  0000 L CNN "Info"
 	1    2050 2750
 	0    1    1    0   
 $EndComp
@@ -73,16 +70,15 @@ Wire Wire Line
 Wire Wire Line
 	2050 1750 2050 2600
 Wire Wire Line
-	2050 2900 2050 4300
-Connection ~ 2050 4300
+	2050 2900 2050 3850
 Wire Wire Line
-	2050 4300 1500 4300
+	2050 3850 1500 3850
 $Comp
 L Device:CP C1
 U 1 1 62A6F382
 P 2550 2750
 F 0 "C1" H 2668 2796 50  0000 L CNN
-F 1 "1F" H 2668 2705 50  0000 L CNN
+F 1 "1.5F" H 2668 2705 50  0000 L CNN
 F 2 "" H 2588 2600 50  0001 C CNN
 F 3 "~" H 2550 2750 50  0001 C CNN
 	1    2550 2750
@@ -91,39 +87,17 @@ $EndComp
 $Comp
 L Device:CP C2
 U 1 1 62A6FA96
-P 2900 2750
-F 0 "C2" H 3018 2796 50  0000 L CNN
-F 1 "1F" H 3018 2705 50  0000 L CNN
-F 2 "" H 2938 2600 50  0001 C CNN
-F 3 "~" H 2900 2750 50  0001 C CNN
-	1    2900 2750
+P 3050 2750
+F 0 "C2" H 3168 2796 50  0000 L CNN
+F 1 "1.5F" H 3168 2705 50  0000 L CNN
+F 2 "" H 3088 2600 50  0001 C CNN
+F 3 "~" H 3050 2750 50  0001 C CNN
+	1    3050 2750
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	2050 1750 2550 1750
-Wire Wire Line
-	2550 1750 2550 2600
 Connection ~ 2050 1750
 Wire Wire Line
-	2550 1750 2900 1750
-Wire Wire Line
-	2900 1750 2900 2600
-Connection ~ 2550 1750
-Wire Wire Line
-	2550 2900 2550 4300
-Connection ~ 2550 4300
-Wire Wire Line
-	2550 4300 2050 4300
-Wire Wire Line
-	2900 2900 2900 4300
-Connection ~ 2900 4300
-Wire Wire Line
-	2900 4300 2550 4300
-Wire Wire Line
-	2900 1750 3900 1750
-Wire Wire Line
 	3900 1750 3900 2250
-Connection ~ 2900 1750
 Wire Wire Line
 	4700 2950 4700 2550
 Wire Wire Line
@@ -135,9 +109,6 @@ Wire Wire Line
 Wire Wire Line
 	5500 1750 5500 2250
 Connection ~ 3900 1750
-Wire Wire Line
-	5500 4300 5500 3050
-Connection ~ 3900 4300
 $Comp
 L Display_Character:HT1621 LCD1
 U 1 1 62A78604
@@ -156,7 +127,7 @@ Wire Wire Line
 Wire Wire Line
 	3900 1750 5500 1750
 Wire Wire Line
-	3900 4300 5500 4300
+	3900 3850 5500 3850
 Wire Wire Line
 	4700 2550 5100 2550
 Wire Wire Line
@@ -165,4 +136,34 @@ Wire Wire Line
 	4500 2750 4900 2750
 Wire Wire Line
 	4500 2950 4700 2950
+Connection ~ 3900 3850
+Wire Wire Line
+	5500 3850 5500 3050
+Connection ~ 2050 3850
+Wire Wire Line
+	1500 3850 1500 2900
+Wire Wire Line
+	2050 1750 2800 1750
+Wire Wire Line
+	2050 3850 2800 3850
+Wire Wire Line
+	2550 2600 2800 2600
+Wire Wire Line
+	2550 2900 2800 2900
+Wire Wire Line
+	2800 2600 2800 1750
+Connection ~ 2800 2600
+Wire Wire Line
+	2800 2600 3050 2600
+Connection ~ 2800 1750
+Wire Wire Line
+	2800 1750 3900 1750
+Wire Wire Line
+	2800 2900 2800 3850
+Connection ~ 2800 2900
+Wire Wire Line
+	2800 2900 3050 2900
+Connection ~ 2800 3850
+Wire Wire Line
+	2800 3850 3900 3850
 $EndSCHEMATC
