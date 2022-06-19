@@ -37,7 +37,7 @@ void startupLoop()
     currentLoopFun = highVoltageLoop;
 
   // DBG
-  currentLoopFun = equalizerLoop;
+  // currentLoopFun = equalizerLoop;
 
   // currentLoopFun = blinkeyLoop;
   // ht1621.setEnabled(false);
@@ -81,6 +81,13 @@ void lowVoltageLoop()
   {
     currentLoopFun = midVoltageLoop;
     return;
+  }
+
+  // Screen off!
+  if (lcdOn)
+  {
+    ht1621.setEnabled(false);
+    lcdOn = false;
   }
 
   // Blink, unless voltage is growing
