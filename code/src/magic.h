@@ -5,7 +5,7 @@
 
 #define VCC_HALF_HYSTERESIS   3
 #define MID_VCC_THRESHOLD     328
-#define HIGH_VCC_THRESHOLD    390
+#define HIGH_VCC_THRESHOLD    410
 
 
 #ifdef ENV_ATTINY

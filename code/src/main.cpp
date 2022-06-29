@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "globals.h"
-#include "mode_loops.h"
+#include "loops.h"
 #include "magic.h"
 
 void setup()

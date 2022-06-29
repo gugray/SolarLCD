@@ -35,7 +35,6 @@ public:
   void setDigit(uint8_t digit, uint8_t val);
 
   // Turns on decimal digits/dots
-  // 0: degree sign; 1: mid dot; 2: mid decimal; 3: left decimal
   // Dots: DT_XX defines
   void setDots(uint8_t mask);
 

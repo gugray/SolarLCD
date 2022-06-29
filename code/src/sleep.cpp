@@ -3,6 +3,8 @@
 #include <avr/wdt.h>
 #include "sleep.h"
 
+volatile uint32_t msec = 0;
+
 #ifndef cbi
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
 #endif
@@ -58,4 +60,26 @@ void sleep(uint8_t sleepLength)
 
   sleep_mode();
   sleep_disable(); // system continues execution here when watchdog timed out
+  
+  // Increment msec counter
+  if (sleepLength == 0)
+    msec += 16;
+  else if (sleepLength == 1)
+    msec += 32;
+  else if (sleepLength == 2)
+    msec += 64;
+  else if (sleepLength == 3)
+    msec += 128;
+  else if (sleepLength == 4)
+    msec += 250;
+  else if (sleepLength == 5)
+    msec += 500;
+  else if (sleepLength == 6)
+    msec += 1000;
+  else if (sleepLength == 7)
+    msec += 2000;
+  else if (sleepLength == 8)
+    msec += 4000;
+  else if (sleepLength == 9)
+    msec += 8000;
 }
