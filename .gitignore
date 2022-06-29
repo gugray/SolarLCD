@@ -3,3 +3,7 @@
 # KiCad
 fp-info-cache
 *.sch-bak
+
+# C#
+bin
+obj
