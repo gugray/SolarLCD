@@ -84,6 +84,41 @@ void Painter::setSegs(uint8_t digit, uint8_t mask)
   if (mask & SG_BM) buf[2] |= (0x08 >> digit);
 }
 
+void Painter::setSegIx(uint8_t digit, uint8_t segIx)
+{
+  if (segIx == 0) buf[3] |= (0x80 >> digit);
+  else if (segIx == 1) buf[1] |= (0x08 >> digit);
+  else if (segIx == 2) buf[3] |= (0x08 >> digit);
+  else if (segIx == 3) buf[0] |= (0x80 >> digit);
+  else if (segIx == 4) buf[1] |= (0x80 >> digit);
+  else if (segIx == 5) buf[2] |= (0x80 >> digit);
+  else if (segIx == 6) buf[2] |= (0x08 >> digit);
+}
+
+void Painter::clearSegIx(uint8_t digit, uint8_t segIx)
+{
+  if (segIx == 0) buf[3] &= 0xff - (0x80 >> digit);
+  else if (segIx == 1) buf[1] &= 0xff - (0x08 >> digit);
+  else if (segIx == 2) buf[3] &= 0xff - (0x08 >> digit);
+  else if (segIx == 3) buf[0] &= 0xff - (0x80 >> digit);
+  else if (segIx == 4) buf[1] &= 0xff - (0x80 >> digit);
+  else if (segIx == 5) buf[2] &= 0xff - (0x80 >> digit);
+  else if (segIx == 6) buf[2] &= 0xff - (0x08 >> digit);
+}
+
+uint8_t Painter::getSegIx(uint8_t digit, uint8_t segIx)
+{
+  uint8_t val;
+  if (segIx == 0) val = buf[3] & (0x80 >> digit);
+  else if (segIx == 1) val = buf[1] & (0x08 >> digit);
+  else if (segIx == 2) val = buf[3] & (0x08 >> digit);
+  else if (segIx == 3) val = buf[0] & (0x80 >> digit);
+  else if (segIx == 4) val = buf[1] & (0x80 >> digit);
+  else if (segIx == 5) val = buf[2] & (0x80 >> digit);
+  else if (segIx == 6) val = buf[2] & (0x08 >> digit);
+  return val == 0 ? 0 : 1;
+}
+
 void Painter::setImage(Images img)
 {
   switch (img)

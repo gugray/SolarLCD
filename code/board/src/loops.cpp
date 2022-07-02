@@ -40,10 +40,13 @@ void startupLoop()
     // This way transition to mid-voltage will reset counter to zero
     msec = (uint32_t)1000 * 60 * 60 * 168;
   }
-  else if (vcc < HIGH_VCC_THRESHOLD)
-    setLoopFun(midVoltageLoop);
-  else
-    setLoopFun(highVoltageLoop);
+  else {
+    randomSeed(vcc);
+    if (vcc < HIGH_VCC_THRESHOLD)
+      setLoopFun(midVoltageLoop);
+    else
+      setLoopFun(highVoltageLoop);
+    }
 }
 
 void lowVoltageLoop()
@@ -54,6 +57,7 @@ void lowVoltageLoop()
   // If voltage is now above threshold: change mode
   if (vcc > MID_VCC_THRESHOLD + VCC_HALF_HYSTERESIS)
   {
+    randomSeed(msec);
     setLoopFun(midVoltageLoop);
     // If msec counter is low-ish (<8 hours), we assume this is a fluctuation within the same day
     // If the counter is larger (and it starts super large after wake-up), then we reset it here
@@ -102,11 +106,13 @@ void midVoltageLoop()
     changeAnim = animVoltage(false);
   else if (ls.animIx == 1)
     changeAnim = animTime(false);
+  else if (ls.animIx == 2)
+    changeAnim = animSmiley();
   if (changeAnim)
   {
     as.clear();
     ++ls.animIx;
-    if (ls.animIx > 1)
+    if (ls.animIx > 2)
       ls.animIx = 0;
   }
 
@@ -131,12 +137,25 @@ void highVoltageLoop()
   else if (ls.animIx == 1)
     changeAnim = animTime(true);
   else if (ls.animIx == 2)
+    changeAnim = animSmiley();
+  else if (ls.animIx == 3)
     changeAnim = animEqualizer();
+  else if (ls.animIx == 4)
+    changeAnim = animLifeGame();
+  else if (ls.animIx == 5)
+    changeAnim = animEuclideanO();
+  else if (ls.animIx == 6)
+    changeAnim = animEuclideanU();
+
   if (changeAnim)
   {
     as.clear();
-    ++ls.animIx;
-    if (ls.animIx > 2)
+    // Voltage -> Time -> [Random long]
+    if (ls.animIx == 1)
+      ls.animIx = 2 + random(5);
+    else if (ls.animIx < 1)
+      ls.animIx += 1;
+    else
       ls.animIx = 0;
   }
 

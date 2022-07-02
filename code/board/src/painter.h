@@ -43,6 +43,12 @@ public:
   // Segment mask: SG_XX defines
   void setSegs(uint8_t digit, uint8_t mask);
 
+  void setSegIx(uint8_t digit, uint8_t segIx);
+
+  void clearSegIx(uint8_t digit, uint8_t segIx);
+
+  uint8_t getSegIx(uint8_t digit, uint8_t segIx);
+
   void setImage(Images img);
 };
 

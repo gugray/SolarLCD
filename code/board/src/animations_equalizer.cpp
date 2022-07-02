@@ -2,6 +2,7 @@
 #include "animations.h"
 #include "globals.h"
 
+#define STOP_AFTER_N_SECONDS 12
 #define ANIM_PERIOD 4
 
 #define NOISE_LEN 8 
@@ -54,6 +55,6 @@ bool animEqualizer()
   drawEqualizerBar(noise3, SG_BM);
   ht1621.wrBuffer();
 
-  // Do this for about 16 seconds
-  return as.counter >= 16 * 32;
+  // Do this for about N seconds
+  return as.counter >= STOP_AFTER_N_SECONDS * 32;
 }

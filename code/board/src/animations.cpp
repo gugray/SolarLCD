@@ -35,11 +35,12 @@ void AnimState::setFlag(uint8_t ix, bool val)
 
 void drawVoltage(int16_t val)
 {
-  painter.setDigit(3, val % 10);
-  val /= 10;
   painter.setDigit(2, val % 10);
   val /= 10;
+  painter.setDigit(1, val % 10);
+  val /= 10;
   painter.setDigit(0, val);
+  painter.setSegs(3, SG_BL | SG_BR | SG_BM);
 }
 
 bool animVoltage(bool fast)
@@ -56,13 +57,12 @@ bool animVoltage(bool fast)
 
   ht1621.clearBuffer();
   ht1621.setEnabled(true);
-  
   drawVoltage(vcc);
   bool dotShown = !as.getFlag(1);
   as.setFlag(1, dotShown);
   if (dotShown)
-    painter.setSegs(1, SG_BL | SG_BR | SG_BM);
-  
+    painter.setDots(DT_LDEC);
+
   ht1621.wrBuffer();
 
   // Do this for about 8 seconds
@@ -112,3 +112,16 @@ bool animTime(bool fast)
   return as.counter >= (fast ? 8 * 32 : 8 * 2);
 }
 
+bool animSmiley()
+{
+  if (as.counter == 0)
+  {
+    ht1621.clearBuffer();
+    painter.setImage(Painter::frog);
+    ht1621.wrBuffer();
+  }
+  ++as.counter;
+
+  // Do this for about 4 seconds
+  return as.counter >= 8 * 32;
+}

@@ -20,7 +20,8 @@ int16_t measure_vcc_ext()
   // Pin has a 1M resistor to battery voltage and 100k resistor to ground
   // Ie pin has 0.090909 times battery voltage, getting compared to 1.1V
 
-  sbi(ADCSRA, ADEN);                          // switch Analog to Digitalconverter ON
+  sbi(ADCSRA, ADEN); // switch Analog to Digitalconverter ON
+  ADCSRA |= 0b110;  // Prescaler: 64 -> 15kHz @1MHz
   ADMUX = _BV(MUX1) | _BV(MUX0) | _BV(REFS1); // ADC3 on PB3, which is pin 3; against 1.1V internal reference
   ADCSRA |= _BV(ADSC); // Convert
   while (bit_is_set(ADCSRA, ADSC))
@@ -34,7 +35,7 @@ int16_t measure_vcc_ext()
   low = ADCL;
   val = (ADCH << 8) | low;
 
-  ADCSRA = 0; // disable ADV
+  ADCSRA = 0; // disable ADC
 
   // 41.3512 -> voltage
   // we return voltage * 100
