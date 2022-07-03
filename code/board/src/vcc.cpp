@@ -10,34 +10,38 @@ volatile int16_t vcc = 0;
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
 
-// For when playing with clock, maybe
-// ADC Prescaler set to 64 - 125kHz@8MHz
-// ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (0 << ADPS0);
-
-int16_t measure_vcc_ext()
+void measureVCC()
 {
   // get_vcc_ext uses the internal reference 1.1V and measures voltage on a pin
   // Pin has a 1M resistor to battery voltage and 100k resistor to ground
   // Ie pin has 0.090909 times battery voltage, getting compared to 1.1V
 
-  sbi(ADCSRA, ADEN); // switch Analog to Digitalconverter ON
+  sbi(ADCSRA, ADEN); // enable ADC
+
   ADCSRA |= 0b110;  // Prescaler: 64 -> 15kHz @1MHz
   ADMUX = _BV(MUX1) | _BV(MUX0) | _BV(REFS1); // ADC3 on PB3, which is pin 3; against 1.1V internal reference
+
+  // Conversion takes 25 cycles when first enabled (13 afterwards)
+  // Even at low ADC clock of 15kHz, that can no way be longer than 2msec
+  // Count every 0.01msec = 10 micros up to 255; then, abandon
+  uint8_t waitCount = 0;
   ADCSRA |= _BV(ADSC); // Convert
-  while (bit_is_set(ADCSRA, ADSC))
-    ;
+  while (bit_is_set(ADCSRA, ADSC) && waitCount != 0xff)
+  {
+    delayMicroseconds(100);
+    ++waitCount;
+  }
+  // Conversion didn't complete in time
+  if (waitCount == 0xff)
+    return;
+
+  // Read value
   uint8_t low = ADCL;
   unsigned int val = (ADCH << 8) | low;
-  // discard previous result
-  ADCSRA |= _BV(ADSC); // Convert
-  while (bit_is_set(ADCSRA, ADSC))
-    ;
-  low = ADCL;
-  val = (ADCH << 8) | low;
 
   ADCSRA = 0; // disable ADC
 
   // 41.3512 -> voltage
   // we return voltage * 100
-  return ((long)1025 * val) / 878;
+  vcc = ((long)1025 * val) / 878;
 }
