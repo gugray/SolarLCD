@@ -22,6 +22,7 @@ struct AnimState
 extern AnimState as;
 
 bool animVoltage(bool fast);
+bool animTemp(bool fast);
 bool animTime(bool fast);
 bool animSmiley(bool fast);
 bool animEqualizer();

@@ -4,32 +4,56 @@
 #include "globals.h"
 #include "sleep.h"
 #include "vcc.h"
+#include "temp.h"
 #include "magic.h"
 
-#define VCC_MEASURE_N_HALFSEC   1200  // Every 10 minutes
-#define VCC_MEASURE_N_32MSEC    15    // Every 480 msec ~ half sec
+#define LOWV_VCC_MEASURE_N_HALFSEC 1200 // Every 10 minutes
+#define HIGHV_VCC_MEASURE_N_32MSEC 15   // Every 480 msec ~ half sec
+
+#define MIDV_TEMP_MEASURE_N_HALFSEC 240 // Mid-voltage mode: every 2 minutes
+#define HIGHV_TEMP_MEASURE_N_32MSEC 938 // High-voltage mode: every 30 seconds
 
 LoopFun currentLoopFun;
 LoopState ls;
 
 void measureVcc()
 {
-    ls.lastVcc = vcc;
-    vcc = measure_vcc_ext();
-    // vcc = 250;
-    ls.vccMeasureCycle = 0;
+  ls.lastVcc = vcc;
+  measureVCC();
+  // vcc = 250;
+  ls.vccMeasureCycle = 0;
 }
 
 void setLoopFun(LoopFun fun)
 {
   currentLoopFun = fun;
   ls.vccMeasureCycle = 1;
+  ls.tempMeasureCycle = 0;
   as.clear();
   ls.animIx = 0;
 }
 
+void tempDuty(bool midV)
+{
+  if (ls.tempMeasureCycle == 0)
+  {
+    startTempConversion();
+    ++ls.tempMeasureCycle;
+  }
+  else if (ls.tempMeasureCycle < 100 && ls.tempMeasureCycle > (midV ? 4 : 64))
+  {
+    readTemp();
+    ls.tempMeasureCycle += 100;
+  }
+  else if (ls.tempMeasureCycle > (midV ? MIDV_TEMP_MEASURE_N_HALFSEC : HIGHV_TEMP_MEASURE_N_32MSEC) + 100)
+    ls.tempMeasureCycle = 0;
+  else
+    ++ls.tempMeasureCycle;
+}
+
 void startupLoop()
 {
+  // measureTemp(); // DBG
   measureVcc();
   ls.lastVcc = vcc;
   msec = 0;
@@ -41,18 +65,19 @@ void startupLoop()
     // This way transition to mid-voltage will reset counter to zero
     msec = (uint32_t)1000 * 60 * 60 * 168;
   }
-  else {
+  else
+  {
     randomSeed(vcc);
     if (vcc < HIGH_VCC_THRESHOLD)
       setLoopFun(midVoltageLoop);
     else
       setLoopFun(highVoltageLoop);
-    }
+  }
 }
 
 void lowVoltageLoop()
 {
-  if (ls.vccMeasureCycle >= VCC_MEASURE_N_HALFSEC)
+  if (ls.vccMeasureCycle >= LOWV_VCC_MEASURE_N_HALFSEC)
     measureVcc();
 
   // If voltage is now above threshold: change mode
@@ -104,12 +129,17 @@ void midVoltageLoop()
     return;
   }
 
+  // Convert temperature periodically; read result 1 second later
+  tempDuty(true);
+
   bool changeAnim = false;
   if (ls.animIx == 0)
     changeAnim = animVoltage(false);
   else if (ls.animIx == 1)
-    changeAnim = animTime(false);
+    changeAnim = animTemp(false);
   else if (ls.animIx == 2)
+    changeAnim = animTime(false);
+  else if (ls.animIx == 3)
     changeAnim = animSmiley(false);
   else
     changeAnim = true;
@@ -117,7 +147,7 @@ void midVoltageLoop()
   {
     as.clear();
     ++ls.animIx;
-    if (ls.animIx > 2)
+    if (ls.animIx > 3)
       ls.animIx = 0;
   }
 
@@ -126,7 +156,7 @@ void midVoltageLoop()
 
 void highVoltageLoop()
 {
-  if (ls.vccMeasureCycle >= VCC_MEASURE_N_32MSEC)
+  if (ls.vccMeasureCycle >= HIGHV_VCC_MEASURE_N_32MSEC)
     measureVcc();
 
   // If voltage is now below threshold: change mode
@@ -136,20 +166,24 @@ void highVoltageLoop()
     return;
   }
 
+  tempDuty(false);
+  
   bool changeAnim = false;
   if (ls.animIx == 0)
     changeAnim = animVoltage(true);
   else if (ls.animIx == 1)
-    changeAnim = animTime(true);
+    changeAnim = animTemp(true);
   else if (ls.animIx == 2)
-    changeAnim = animSmiley(true);
+    changeAnim = animTime(true);
   else if (ls.animIx == 3)
-    changeAnim = animEqualizer();
+    changeAnim = animSmiley(true);
   else if (ls.animIx == 4)
-    changeAnim = animLifeGame();
+    changeAnim = animEqualizer();
   else if (ls.animIx == 5)
-    changeAnim = animEuclideanO();
+    changeAnim = animLifeGame();
   else if (ls.animIx == 6)
+    changeAnim = animEuclideanO();
+  else if (ls.animIx == 7)
     changeAnim = animEuclideanU();
   else
     changeAnim = true;
@@ -157,10 +191,10 @@ void highVoltageLoop()
   if (changeAnim)
   {
     as.clear();
-    // Voltage -> Time -> [Random long]
-    if (ls.animIx == 1)
-      ls.animIx = 2 + random(5);
-    else if (ls.animIx < 1)
+    // Voltage -> Temp -> Time -> [Random long]
+    if (ls.animIx == 2)
+      ls.animIx = 3 + random(5);
+    else if (ls.animIx < 2)
       ls.animIx += 1;
     else
       ls.animIx = 0;
