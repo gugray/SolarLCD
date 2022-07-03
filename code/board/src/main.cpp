@@ -5,9 +5,8 @@
 
 void setup()
 {
+  pinMode(PIN_LED, INPUT);
   ht1621.begin();
-  pinMode(PIN_LED, OUTPUT);
-  digitalWrite(PIN_LED, LOW);
   currentLoopFun = startupLoop;
 }
 

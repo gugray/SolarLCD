@@ -16,7 +16,7 @@ void measureVcc()
 {
     ls.lastVcc = vcc;
     vcc = measure_vcc_ext();
-    // vcc = 420;
+    // vcc = 250;
     ls.vccMeasureCycle = 0;
 }
 
@@ -25,6 +25,7 @@ void setLoopFun(LoopFun fun)
   currentLoopFun = fun;
   ls.vccMeasureCycle = 1;
   as.clear();
+  ls.animIx = 0;
 }
 
 void startupLoop()
@@ -73,10 +74,12 @@ void lowVoltageLoop()
   // Blink, unless voltage is growing
   if (vcc <= ls.lastVcc)
   {
-    digitalWrite(PIN_LED, HIGH);
+    pinMode(PIN_LED, OUTPUT);
+    digitalWrite(PIN_LED, LOW);
     delay(8); // Minimum sleep is 16msec. Running MCU is less costly than flash 2x as long
     msec += 8;
-    digitalWrite(PIN_LED, LOW);
+    digitalWrite(PIN_LED, HIGH);
+    pinMode(PIN_LED, INPUT);
   }
 
   // Sleep
@@ -107,7 +110,9 @@ void midVoltageLoop()
   else if (ls.animIx == 1)
     changeAnim = animTime(false);
   else if (ls.animIx == 2)
-    changeAnim = animSmiley();
+    changeAnim = animSmiley(false);
+  else
+    changeAnim = true;
   if (changeAnim)
   {
     as.clear();
@@ -137,7 +142,7 @@ void highVoltageLoop()
   else if (ls.animIx == 1)
     changeAnim = animTime(true);
   else if (ls.animIx == 2)
-    changeAnim = animSmiley();
+    changeAnim = animSmiley(true);
   else if (ls.animIx == 3)
     changeAnim = animEqualizer();
   else if (ls.animIx == 4)
@@ -146,6 +151,8 @@ void highVoltageLoop()
     changeAnim = animEuclideanO();
   else if (ls.animIx == 6)
     changeAnim = animEuclideanU();
+  else
+    changeAnim = true;
 
   if (changeAnim)
   {

@@ -23,10 +23,10 @@ extern AnimState as;
 
 bool animVoltage(bool fast);
 bool animTime(bool fast);
+bool animSmiley(bool fast);
 bool animEqualizer();
 bool animLifeGame();
 bool animEuclideanO();
 bool animEuclideanU();
-bool animSmiley();
 
 #endif

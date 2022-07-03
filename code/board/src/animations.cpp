@@ -112,7 +112,7 @@ bool animTime(bool fast)
   return as.counter >= (fast ? 8 * 32 : 8 * 2);
 }
 
-bool animSmiley()
+bool animSmiley(bool fast)
 {
   if (as.counter == 0)
   {
@@ -122,6 +122,6 @@ bool animSmiley()
   }
   ++as.counter;
 
-  // Do this for about 4 seconds
-  return as.counter >= 8 * 32;
+  // Do this for about 8 seconds
+  return as.counter >= (fast ? 8 * 32 : 8 * 2);
 }
