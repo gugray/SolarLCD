@@ -8,43 +8,30 @@ namespace VPC;
 
 class Program
 {
-    const int periodMsec = 1000 * 60;
-    const string portName = "/dev/tty.usbserial-10";
+    const int periodMsec = 1000;
+    const string fname = "voltages.txt";
+    const string portName = "/dev/tty.usbserial-110";
 
     static SerialPort port;
-    static Exception timerEx;
+    static StreamWriter sw;
 
     static void work()
     {
         port = new(portName, 9600);
         port.Open();
-        Timer timer = new(period, null, 0, periodMsec);
+        port.ReadExisting();
+        sw = new StreamWriter(fname);
         while (port.IsOpen)
         {
-            Thread.Sleep(100);
-            if (timerEx != null)
-                throw timerEx;
-        }
-    }
-
-    static void period(object o)
-    {
-        try
-        {
             float val;
-            while (true)
-            {
-                port.Write("\n");
-                string ln = port.ReadLine();
-                if (float.TryParse(ln, out val))
-                    break;
-            }
+            string ln = port.ReadLine();
+            if (!float.TryParse(ln, out val))
+                continue;
             var now = DateTime.Now;
-            Console.WriteLine(now.ToString("s", CultureInfo.InvariantCulture) + '\t' + val);
-        }
-        catch (Exception ex)
-        {
-            timerEx = ex;
+            string msg = now.ToString("s", CultureInfo.InvariantCulture) + '\t' + val;
+            sw.WriteLine(msg);
+            sw.Flush();
+            Console.WriteLine(msg);
         }
     }
 
