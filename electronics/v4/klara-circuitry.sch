@@ -1,0 +1,387 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L MCU_Microchip_ATtiny:ATtiny85-20PU U2
+U 1 1 62A64AD0
+P 4400 2850
+F 0 "U2" H 3871 2896 50  0001 R CNN
+F 1 "ATtiny85" H 4831 3425 50  0000 R CNN
+F 2 "Package_DIP:DIP-8_W7.62mm" H 4400 2850 50  0001 C CIN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/atmel-2586-avr-8-bit-microcontroller-attiny25-attiny45-attiny85_datasheet.pdf" H 4400 2850 50  0001 C CNN
+	1    4400 2850
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Solar_Cell SC1
+U 1 1 62A667FF
+P 1500 2800
+F 0 "SC1" H 1608 2896 50  0000 L CNN
+F 1 "Solar_Cell" H 1608 2805 50  0001 L CNN
+F 2 "Connector_Wire:SolderWire-0.1sqmm_1x02_P3.6mm_D0.4mm_OD1mm" V 1500 2860 50  0001 C CNN
+F 3 "~" V 1500 2860 50  0001 C CNN
+F 4 "5V" H 1608 2805 50  0000 L CNN "Voltage"
+	1    1500 2800
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:D D1
+U 1 1 62A696C5
+P 2100 1750
+F 0 "D1" H 2100 1533 50  0000 C CNN
+F 1 "1N60" H 2100 1624 50  0000 C CNN
+F 2 "Diode_THT:D_5W_P12.70mm_Horizontal" H 2100 1750 50  0001 C CNN
+F 3 "" H 2100 1624 50  0001 C CNN
+	1    2100 1750
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	1500 2600 1500 1750
+Wire Wire Line
+	4400 3450 4400 3850
+$Comp
+L Device:D_Zener D2
+U 1 1 62A6BF92
+P 2350 2750
+F 0 "D2" V 2304 2830 50  0000 L CNN
+F 1 "Zener" V 2395 2830 50  0000 L CNN
+F 2 "" H 2350 2750 50  0001 C CNN
+F 3 "~" H 2350 2750 50  0001 C CNN
+F 4 "5V" V 2488 2830 50  0000 L CNN "Info"
+	1    2350 2750
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2350 2900 2350 3850
+$Comp
+L Device:CP C1A
+U 1 1 62A6F382
+P 2800 2750
+F 0 "C1A" H 2850 2850 50  0000 L CNN
+F 1 "1.5F" H 2850 2650 50  0000 L CNN
+F 2 "" H 2838 2600 50  0001 C CNN
+F 3 "~" H 2800 2750 50  0001 C CNN
+	1    2800 2750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4400 1750 4400 2250
+Wire Wire Line
+	5200 2950 5200 2550
+$Comp
+L Display_Character:HT1621 LCD1
+U 1 1 62A78604
+P 6450 2750
+F 0 "LCD1" H 6504 3228 50  0000 L TNN
+F 1 "HT1621" H 6778 2805 50  0001 L CNN
+F 2 "" H 6650 3200 50  0001 C CNN
+F 3 "" H 6650 3200 50  0001 C CNN
+	1    6450 2750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5000 2650 5300 2650
+Wire Wire Line
+	5000 2950 5200 2950
+Wire Wire Line
+	1500 3850 1500 2900
+$Comp
+L Regulator_Linear:MCP1700-3302E_TO92 U1
+U 1 1 62AF9A6C
+P 3500 1750
+F 0 "U1" H 3250 1850 50  0000 R CNN
+F 1 "MCP1700-3302E" H 3800 1600 50  0000 R CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 3500 1550 50  0001 C CIN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/20001826D.pdf" H 3500 1750 50  0001 C CNN
+	1    3500 1750
+	1    0    0    1   
+$EndComp
+Wire Wire Line
+	5300 2850 5300 2650
+Wire Wire Line
+	3500 2050 3500 2100
+Wire Wire Line
+	5400 2650 5400 2750
+Wire Wire Line
+	5400 2750 5000 2750
+$Comp
+L Device:R R4
+U 1 1 62B13E26
+P 5500 2000
+F 0 "R4" H 5430 2046 50  0000 R CNN
+F 1 "330" H 5430 1955 50  0000 R CNN
+F 2 "" V 5430 2000 50  0001 C CNN
+F 3 "~" H 5500 2000 50  0001 C CNN
+	1    5500 2000
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Device:LED D3
+U 1 1 62B14898
+P 5500 2300
+F 0 "D3" V 5539 2182 50  0000 R CNN
+F 1 "LED" V 5448 2182 50  0000 R CNN
+F 2 "" H 5500 2300 50  0001 C CNN
+F 3 "~" H 5500 2300 50  0001 C CNN
+	1    5500 2300
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	4400 3850 5100 3850
+Wire Wire Line
+	4400 1750 5100 1750
+Wire Wire Line
+	3500 3850 4400 3850
+Connection ~ 3500 3850
+Connection ~ 4400 3850
+Wire Wire Line
+	3800 1750 3950 1750
+Connection ~ 4400 1750
+$Comp
+L Device:C C2
+U 1 1 62B08E4B
+P 3950 1950
+F 0 "C2" H 4065 1996 50  0000 L CNN
+F 1 "1uF" H 4065 1905 50  0000 L CNN
+F 2 "" H 3988 1800 50  0001 C CNN
+F 3 "~" H 3950 1950 50  0001 C CNN
+	1    3950 1950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3950 1800 3950 1750
+Connection ~ 3950 1750
+Wire Wire Line
+	3950 1750 4400 1750
+Wire Wire Line
+	3950 2100 3500 2100
+Connection ~ 3500 2100
+Wire Wire Line
+	3500 2100 3500 3850
+$Comp
+L Device:R R2
+U 1 1 62B0AC42
+P 5100 2000
+F 0 "R2" H 5030 2046 50  0000 R CNN
+F 1 "1M" H 5030 1955 50  0000 R CNN
+F 2 "" V 5030 2000 50  0001 C CNN
+F 3 "~" H 5100 2000 50  0001 C CNN
+	1    5100 2000
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Device:R R3
+U 1 1 62B0C047
+P 5100 3600
+F 0 "R3" H 5030 3646 50  0000 R CNN
+F 1 "100k" H 5030 3555 50  0000 R CNN
+F 2 "" V 5030 3600 50  0001 C CNN
+F 3 "~" H 5100 3600 50  0001 C CNN
+	1    5100 3600
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	5100 1850 5100 1750
+Connection ~ 5100 1750
+Wire Wire Line
+	5000 2850 5100 2850
+Wire Wire Line
+	5100 2850 5100 2150
+Wire Wire Line
+	5100 2850 5100 3450
+Connection ~ 5100 2850
+Wire Wire Line
+	5100 3750 5100 3850
+Connection ~ 2350 3850
+Wire Wire Line
+	1500 3850 2350 3850
+Wire Wire Line
+	2350 2600 2350 1750
+$Comp
+L Device:R R1
+U 1 1 62C59C10
+P 1800 1750
+F 0 "R1" V 1600 1850 50  0000 R CNN
+F 1 "59" V 1700 1850 50  0000 R CNN
+F 2 "" V 1730 1750 50  0001 C CNN
+F 3 "~" H 1800 1750 50  0001 C CNN
+	1    1800 1750
+	0    -1   1    0   
+$EndComp
+Wire Wire Line
+	1500 1750 1650 1750
+Wire Wire Line
+	2250 1750 2350 1750
+Connection ~ 2350 1750
+Wire Wire Line
+	5100 1750 5500 1750
+Wire Wire Line
+	5500 1850 5500 1750
+Wire Wire Line
+	5500 2450 5000 2450
+Wire Wire Line
+	5000 2450 5000 2550
+$Comp
+L Device:R R5
+U 1 1 62C7F8B4
+P 5950 2000
+F 0 "R5" H 5880 2046 50  0000 R CNN
+F 1 "10K" H 5880 1955 50  0000 R CNN
+F 2 "" V 5880 2000 50  0001 C CNN
+F 3 "~" H 5950 2000 50  0001 C CNN
+	1    5950 2000
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push SW1
+U 1 1 62C8092B
+P 5950 3600
+F 0 "SW1" V 5904 3748 50  0000 L CNN
+F 1 "Push" V 5995 3748 50  0000 L CNN
+F 2 "" H 5950 3800 50  0001 C CNN
+F 3 "~" H 5950 3800 50  0001 C CNN
+	1    5950 3600
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5500 2450 5500 3250
+Connection ~ 5500 2450
+Wire Wire Line
+	5300 2850 5650 2850
+Wire Wire Line
+	5650 2850 5650 2750
+Wire Wire Line
+	5200 2550 6050 2550
+Wire Wire Line
+	5400 2650 6050 2650
+Wire Wire Line
+	5650 2750 6050 2750
+Wire Wire Line
+	5950 2150 5950 3050
+Wire Wire Line
+	5000 3050 5950 3050
+Connection ~ 5950 3050
+Wire Wire Line
+	5950 3050 5950 3400
+Wire Wire Line
+	5100 3850 5950 3850
+Wire Wire Line
+	5950 3850 5950 3800
+Connection ~ 5100 3850
+Wire Wire Line
+	5950 3850 6450 3850
+Wire Wire Line
+	6450 3850 6450 3050
+Connection ~ 5950 3850
+Wire Wire Line
+	5500 1750 5950 1750
+Wire Wire Line
+	5950 1750 5950 1850
+Connection ~ 5500 1750
+Wire Wire Line
+	5950 1750 6450 1750
+Wire Wire Line
+	6450 1750 6450 2250
+Connection ~ 5950 1750
+$Comp
+L Sensor_Temperature:DS18B20 U3
+U 1 1 62C8F277
+P 7350 2650
+F 0 "U3" H 7120 2696 50  0001 R CNN
+F 1 "DS18B20" H 7300 2913 50  0000 R CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 6350 2400 50  0001 C CNN
+F 3 "http://datasheets.maximintegrated.com/en/ds/DS18B20.pdf" H 7200 2900 50  0001 C CNN
+	1    7350 2650
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	6450 3850 7350 3850
+Wire Wire Line
+	7350 3850 7350 2950
+Connection ~ 6450 3850
+Wire Wire Line
+	6450 1750 6950 1750
+Wire Wire Line
+	7350 1750 7350 2350
+Connection ~ 6450 1750
+$Comp
+L Device:R R6
+U 1 1 62C99900
+P 6950 2000
+F 0 "R6" H 6880 2046 50  0000 R CNN
+F 1 "10K" H 6880 1955 50  0000 R CNN
+F 2 "" V 6880 2000 50  0001 C CNN
+F 3 "~" H 6950 2000 50  0001 C CNN
+	1    6950 2000
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	6950 2150 6950 2650
+Wire Wire Line
+	5500 3250 6950 3250
+Wire Wire Line
+	6950 2650 7050 2650
+Connection ~ 6950 2650
+Wire Wire Line
+	6950 2650 6950 3250
+Wire Wire Line
+	6950 1850 6950 1750
+Connection ~ 6950 1750
+Wire Wire Line
+	6950 1750 7350 1750
+Wire Wire Line
+	2350 3850 2950 3850
+$Comp
+L Device:CP C1B
+U 1 1 62CA1818
+P 3150 2750
+F 0 "C1B" H 3200 2850 50  0000 L CNN
+F 1 "1.5F" H 3200 2650 50  0000 L CNN
+F 2 "" H 3188 2600 50  0001 C CNN
+F 3 "~" H 3150 2750 50  0001 C CNN
+	1    3150 2750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2800 2600 2800 2450
+Wire Wire Line
+	2800 2450 2950 2450
+Wire Wire Line
+	3150 2450 3150 2600
+Wire Wire Line
+	2800 2900 2800 3050
+Wire Wire Line
+	2800 3050 2950 3050
+Wire Wire Line
+	3150 3050 3150 2900
+Wire Wire Line
+	2950 3050 2950 3850
+Connection ~ 2950 3050
+Wire Wire Line
+	2950 3050 3150 3050
+Connection ~ 2950 3850
+Wire Wire Line
+	2950 3850 3500 3850
+Wire Wire Line
+	2950 2450 2950 1750
+Wire Wire Line
+	2350 1750 2950 1750
+Connection ~ 2950 2450
+Wire Wire Line
+	2950 2450 3150 2450
+Connection ~ 2950 1750
+Wire Wire Line
+	2950 1750 3200 1750
+$EndSCHEMATC
