@@ -14,10 +14,10 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L MCU_Microchip_ATtiny:ATtiny85-20PU IC1
+L MCU_Microchip_ATtiny:ATtiny85-20PU U1
 U 1 1 62A64AD0
 P 3900 2850
-F 0 "IC1" H 3371 2896 50  0001 R CNN
+F 0 "U1" H 3703 3425 50  0000 R CNN
 F 1 "ATtiny85" H 4331 3425 50  0000 R CNN
 F 2 "Package_DIP:DIP-8_W7.62mm" H 3900 2850 50  0001 C CIN
 F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/atmel-2586-avr-8-bit-microcontroller-attiny25-attiny45-attiny85_datasheet.pdf" H 3900 2850 50  0001 C CNN
@@ -54,10 +54,10 @@ Wire Wire Line
 Wire Wire Line
 	1500 1750 1650 1750
 $Comp
-L Device:D_Zener D1
+L Device:D_Zener D2
 U 1 1 62A6BF92
 P 2050 2750
-F 0 "D1" V 2004 2830 50  0000 L CNN
+F 0 "D2" V 2004 2830 50  0000 L CNN
 F 1 "Zener" V 2095 2830 50  0000 L CNN
 F 2 "" H 2050 2750 50  0001 C CNN
 F 3 "~" H 2050 2750 50  0001 C CNN
@@ -76,23 +76,12 @@ Wire Wire Line
 $Comp
 L Device:CP C1
 U 1 1 62A6F382
-P 2550 2750
-F 0 "C1" H 2668 2796 50  0000 L CNN
-F 1 "1.5F" H 2668 2705 50  0000 L CNN
-F 2 "" H 2588 2600 50  0001 C CNN
-F 3 "~" H 2550 2750 50  0001 C CNN
-	1    2550 2750
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:CP C2
-U 1 1 62A6FA96
-P 3050 2750
-F 0 "C2" H 3168 2796 50  0000 L CNN
-F 1 "1.5F" H 3168 2705 50  0000 L CNN
-F 2 "" H 3088 2600 50  0001 C CNN
-F 3 "~" H 3050 2750 50  0001 C CNN
-	1    3050 2750
+P 2800 2750
+F 0 "C1" H 2918 2796 50  0000 L CNN
+F 1 "1.5F" H 2918 2705 50  0000 L CNN
+F 2 "" H 2838 2600 50  0001 C CNN
+F 3 "~" H 2800 2750 50  0001 C CNN
+	1    2800 2750
 	1    0    0    -1  
 $EndComp
 Connection ~ 2050 1750
@@ -146,24 +135,14 @@ Wire Wire Line
 	2050 1750 2800 1750
 Wire Wire Line
 	2050 3850 2800 3850
-Wire Wire Line
-	2550 2600 2800 2600
-Wire Wire Line
-	2550 2900 2800 2900
-Wire Wire Line
-	2800 2600 2800 1750
-Connection ~ 2800 2600
-Wire Wire Line
-	2800 2600 3050 2600
 Connection ~ 2800 1750
 Wire Wire Line
 	2800 1750 3900 1750
 Wire Wire Line
 	2800 2900 2800 3850
-Connection ~ 2800 2900
-Wire Wire Line
-	2800 2900 3050 2900
 Connection ~ 2800 3850
 Wire Wire Line
 	2800 3850 3900 3850
+Wire Wire Line
+	2800 1750 2800 2600
 $EndSCHEMATC

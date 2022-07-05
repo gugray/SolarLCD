@@ -14,17 +14,6 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L MCU_Microchip_ATtiny:ATtiny85-20PU IC1
-U 1 1 62A64AD0
-P 3900 2850
-F 0 "IC1" H 3371 2896 50  0001 R CNN
-F 1 "ATtiny85" H 4331 3425 50  0000 R CNN
-F 2 "Package_DIP:DIP-8_W7.62mm" H 3900 2850 50  0001 C CIN
-F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/atmel-2586-avr-8-bit-microcontroller-attiny25-attiny45-attiny85_datasheet.pdf" H 3900 2850 50  0001 C CNN
-	1    3900 2850
-	1    0    0    -1  
-$EndComp
-$Comp
 L Device:Solar_Cell SC1
 U 1 1 62A667FF
 P 1500 2800
@@ -76,23 +65,12 @@ Wire Wire Line
 $Comp
 L Device:CP C1
 U 1 1 62A6F382
-P 2550 2750
-F 0 "C1" H 2668 2796 50  0000 L CNN
-F 1 "1.5F" H 2668 2705 50  0000 L CNN
-F 2 "" H 2588 2600 50  0001 C CNN
-F 3 "~" H 2550 2750 50  0001 C CNN
-	1    2550 2750
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:CP C2
-U 1 1 62A6FA96
-P 3050 2750
-F 0 "C2" H 3168 2796 50  0000 L CNN
-F 1 "1.5F" H 3168 2705 50  0000 L CNN
-F 2 "" H 3088 2600 50  0001 C CNN
-F 3 "~" H 3050 2750 50  0001 C CNN
-	1    3050 2750
+P 2800 2750
+F 0 "C1" H 2918 2796 50  0000 L CNN
+F 1 "1.5F" H 2918 2705 50  0000 L CNN
+F 2 "" H 2838 2600 50  0001 C CNN
+F 3 "~" H 2800 2750 50  0001 C CNN
+	1    2800 2750
 	1    0    0    -1  
 $EndComp
 Connection ~ 2050 1750
@@ -120,11 +98,11 @@ Connection ~ 2050 3850
 Wire Wire Line
 	1500 3850 1500 2900
 $Comp
-L Regulator_Linear:MCP1700-3302E_TO92 U1
+L Regulator_Linear:MCP1700-3302E_TO92 U2
 U 1 1 62AF9A6C
 P 5450 1750
-F 0 "U1" H 5450 1508 50  0000 C CNN
-F 1 "MCP1700-3302E" H 5450 1599 50  0000 C CNN
+F 0 "U2" H 5200 1850 50  0000 R CNN
+F 1 "MCP1700-3302E" H 5200 1950 50  0000 R CNN
 F 2 "Package_TO_SOT_THT:TO-92_Inline" H 5450 1550 50  0001 C CIN
 F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/20001826D.pdf" H 5450 1750 50  0001 C CNN
 	1    5450 1750
@@ -195,17 +173,6 @@ Wire Wire Line
 	5450 3850 6050 3850
 Wire Wire Line
 	6050 1750 6050 2250
-$Comp
-L Device:C C3
-U 1 1 62B1BD90
-P 5800 1950
-F 0 "C3" H 5915 1996 50  0000 L CNN
-F 1 "1uF" H 5915 1905 50  0000 L CNN
-F 2 "" H 5838 1800 50  0001 C CNN
-F 3 "~" H 5800 1950 50  0001 C CNN
-	1    5800 1950
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	5800 2100 5450 2100
 Connection ~ 5450 2100
@@ -221,23 +188,35 @@ Wire Wire Line
 Wire Wire Line
 	2050 3850 2800 3850
 Wire Wire Line
-	2550 2600 2800 2600
-Wire Wire Line
 	2800 2600 2800 1750
-Connection ~ 2800 2600
-Wire Wire Line
-	2800 2600 3050 2600
 Connection ~ 2800 1750
 Wire Wire Line
 	2800 1750 3900 1750
 Wire Wire Line
-	2550 2900 2800 2900
-Wire Wire Line
 	2800 2900 2800 3850
-Connection ~ 2800 2900
-Wire Wire Line
-	2800 2900 3050 2900
 Connection ~ 2800 3850
 Wire Wire Line
 	2800 3850 3900 3850
+$Comp
+L Device:C C2
+U 1 1 62B1BD90
+P 5800 1950
+F 0 "C2" H 5850 2050 50  0000 L CNN
+F 1 "1uF" H 5850 1850 50  0000 L CNN
+F 2 "" H 5838 1800 50  0001 C CNN
+F 3 "~" H 5800 1950 50  0001 C CNN
+	1    5800 1950
+	1    0    0    -1  
+$EndComp
+$Comp
+L MCU_Microchip_ATtiny:ATtiny85-20PU U1
+U 1 1 62A64AD0
+P 3900 2850
+F 0 "U1" H 3703 3425 50  0000 R CNN
+F 1 "ATtiny85" H 4331 3425 50  0000 R CNN
+F 2 "Package_DIP:DIP-8_W7.62mm" H 3900 2850 50  0001 C CIN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/atmel-2586-avr-8-bit-microcontroller-attiny25-attiny45-attiny85_datasheet.pdf" H 3900 2850 50  0001 C CNN
+	1    3900 2850
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
