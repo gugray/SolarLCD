@@ -177,14 +177,14 @@ void highVoltageLoop()
     changeAnim = animTime(true);
   else if (ls.animIx == 3)
     changeAnim = animSmiley(true);
-  else if (ls.animIx == 4)
-    changeAnim = animEqualizer();
-  else if (ls.animIx == 5)
-    changeAnim = animLifeGame();
-  else if (ls.animIx == 6)
-    changeAnim = animEuclideanO();
-  else if (ls.animIx == 7)
-    changeAnim = animEuclideanU();
+  // else if (ls.animIx == 4)
+  //   changeAnim = animEqualizer();
+  // else if (ls.animIx == 5)
+  //   changeAnim = animLifeGame();
+  // else if (ls.animIx == 6)
+  //   changeAnim = animEuclideanO();
+  // else if (ls.animIx == 7)
+  //   changeAnim = animEuclideanU();
   else
     changeAnim = true;
 

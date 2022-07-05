@@ -7,4 +7,6 @@
 extern HT1621 ht1621;
 extern Painter painter;
 
+// extern volatile uint32_t tcnt;
+
 #endif
