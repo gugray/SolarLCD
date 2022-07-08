@@ -21,12 +21,15 @@ struct AnimState
 
 extern AnimState as;
 
+bool animDay(bool fast);
 bool animVoltage(bool fast);
 bool animTemp(bool fast);
 bool animTime(bool fast);
+bool animPastTime(bool fast);
 bool animSmiley(bool fast);
-bool animEqualizer();
-bool animLifeGame();
-bool animEuclidean(bool varO);
+bool animEqualizer(bool fast);
+bool animLifeGame(bool fast);
+bool animEuclideanO(bool fast);
+bool animEuclideanU(bool fast);
 
 #endif

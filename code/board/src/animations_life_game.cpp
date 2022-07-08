@@ -205,7 +205,7 @@ const uint8_t caosSegs[4] = {
     SG_TP | SG_TL | SG_TR | SG_BL | SG_BR | SG_BM,
     SG_TP | SG_TL | SG_MD | SG_BR | SG_BM};
 
-bool animLifeGame()
+bool animLifeGame(bool fast)
 {
   // Setup once
   if (!as.getFlag(FLAG_SETUP))

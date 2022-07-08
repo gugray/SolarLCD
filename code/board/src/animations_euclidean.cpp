@@ -168,3 +168,13 @@ bool animEuclidean(bool varO)
 
   return false;
 }
+
+bool animEuclideanO(bool fast)
+{
+  return animEuclidean(true);
+}
+
+bool animEuclideanU(bool fast)
+{
+  return animEuclidean(false);
+}

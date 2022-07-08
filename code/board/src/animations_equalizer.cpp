@@ -38,7 +38,7 @@ void drawEqualizerBar(const uint8_t *buf, uint8_t segMask)
   if (val > 3) painter.setSegs(3, segMask);
 }
 
-bool animEqualizer()
+bool animEqualizer(bool fast)
 {
   // We act on every 4th cycle, i.e., every 128msec
   // That'a frame rate of about 8

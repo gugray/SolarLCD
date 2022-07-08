@@ -5,6 +5,7 @@
 #include "sleep.h"
 #include "vcc.h"
 #include "temp.h"
+#include "history.h"
 #include "magic.h"
 
 #define LOWV_VCC_MEASURE_N_HALFSEC 1200 // Every 10 minutes
@@ -15,6 +16,20 @@
 
 LoopFun currentLoopFun;
 LoopState ls;
+
+typedef bool (*AnimFun)(bool);
+
+#define N_BASIC_FAST_ANIMS 5
+#define N_FAST_ANIMS 11
+const AnimFun fastAnimFuns[N_FAST_ANIMS] = { animDay, animVoltage, animTemp, animTime, animPastTime,
+  animEuclideanO, animEuclideanO,
+  animEuclideanU, animEuclideanU,
+  animLifeGame
+};
+
+#define N_SLOW_ANIMS 6
+const AnimFun slowAnimFuns[] = {animDay, animVoltage, animTemp, animTime, animPastTime, animSmiley};
+
 
 void measureVcc()
 {
@@ -54,7 +69,8 @@ void tempDuty(bool midVoltage, bool measureIfOldEnough)
 
 void startupLoop()
 {
-  // measureTemp(); // DBG
+  // History::reset(true); // DBG
+  
   measureVcc();
   ls.lastVcc = vcc;
   msec = 0;
@@ -90,7 +106,10 @@ void lowVoltageLoop()
     // If the counter is larger (and it starts super large after wake-up), then we reset it here
     // This also resets counter if voltage dropped to low, but never low enough to reset
     if (msec > (uint32_t)1000 * 60 * 8)
+    {
       msec = 0;
+      History::newDay();
+    }
     return;
   }
 
@@ -120,6 +139,7 @@ void midVoltageLoop()
   // If voltage is now below threshold: change mode
   if (vcc < MID_VCC_THRESHOLD - VCC_HALF_HYSTERESIS)
   {
+    History::setActiveMinutes(msec / 1000 / 60);
     setLoopFun(lowVoltageLoop);
     return;
   }
@@ -130,23 +150,17 @@ void midVoltageLoop()
     return;
   }
 
-  bool changeAnim = false;
   bool canMeasureTemp = false;
-  if (ls.animIx == 0)
-    changeAnim = animVoltage(false);
-  else if (ls.animIx == 1)
-    changeAnim = animTemp(false);
-  else if (ls.animIx == 2)
-    changeAnim = animTime(false);
-  else if (ls.animIx == 3)
-    changeAnim = animSmiley(false);
+  bool changeAnim = false;
+  if (ls.animIx < N_SLOW_ANIMS)
+    changeAnim = slowAnimFuns[ls.animIx](false);
   else
     changeAnim = true;
   if (changeAnim)
   {
     as.clear();
     ++ls.animIx;
-    if (ls.animIx > 3)
+    if (ls.animIx >= N_SLOW_ANIMS)
     {
       ls.animIx = 0;
       // We start temp converstion when showing voltage
@@ -173,34 +187,19 @@ void highVoltageLoop()
     return;
   }
 
-  bool changeAnim = false;
   bool canMeasureTemp = false;
-  if (ls.animIx == 0)
-    changeAnim = animVoltage(true);
-  else if (ls.animIx == 1)
-    changeAnim = animTemp(true);
-  else if (ls.animIx == 2)
-    changeAnim = animTime(true);
-  else if (ls.animIx == 3)
-    changeAnim = animSmiley(true);
-  else if (ls.animIx == 4 || ls.animIx == 5)
-    changeAnim = animEqualizer();
-  else if (ls.animIx == 6 || ls.animIx == 7)
-    changeAnim = animEuclidean(true);
-  else if (ls.animIx == 8 || ls.animIx == 9)
-    changeAnim = animEuclidean(false);
-  else if (ls.animIx == 10)
-    changeAnim = animLifeGame();
+  bool changeAnim = false;
+  if (ls.animIx < N_FAST_ANIMS)
+    changeAnim = fastAnimFuns[ls.animIx](true);
   else
     changeAnim = true;
-
   if (changeAnim)
   {
     as.clear();
-    // Voltage -> Temp -> Time -> [Random long]
-    if (ls.animIx == 2)
-      ls.animIx = random(3, 11);
-    else if (ls.animIx < 2)
+    // [Basic sequence] -> [1 random long]
+    if (ls.animIx == N_BASIC_FAST_ANIMS - 1)
+      ls.animIx = random(N_BASIC_FAST_ANIMS, N_FAST_ANIMS + 1);
+    else if (ls.animIx < N_BASIC_FAST_ANIMS - 1)
       ls.animIx += 1;
     else
     {
