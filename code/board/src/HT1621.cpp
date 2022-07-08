@@ -103,23 +103,19 @@ void HT1621::wrCmd(uint8_t cmd)
   digitalWrite(PIN_CS, HIGH);
 }
 
-void HT1621::wrBufPos(uint8_t ix)
-{
-  uint8_t segData = buffer[ix];
-  uint8_t addr = 3 - ix;
-  addr <<= 3;
-  digitalWrite(PIN_CS, LOW);
-  wrData(0xa0, 3);
-  wrData(addr, 6);
-  wrData(segData, 8);
-  digitalWrite(PIN_CS, HIGH);
-}
-
 // takes the buffer and puts it straight into the driver
 void HT1621::wrBuffer()
 {
-  wrBufPos(0);
-  wrBufPos(1);
-  wrBufPos(2);
-  wrBufPos(3);
+  for (uint8_t ix = 0; ix < 4; ++ix)
+  {
+    // Write one buffer position
+    uint8_t segData = buffer[ix];
+    uint8_t addr = 3 - ix;
+    addr <<= 3;
+    digitalWrite(PIN_CS, LOW);
+    wrData(0xa0, 3);
+    wrData(addr, 6);
+    wrData(segData, 8);
+    digitalWrite(PIN_CS, HIGH);
+  }
 }

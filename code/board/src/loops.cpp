@@ -33,22 +33,23 @@ void setLoopFun(LoopFun fun)
   ls.animIx = 0;
 }
 
-void tempDuty(bool midV)
+void tempDuty(bool midVoltage, bool measureIfOldEnough)
 {
-  if (ls.tempMeasureCycle == 0)
-  {
-    startTempConversion();
-    ++ls.tempMeasureCycle;
-  }
-  else if (ls.tempMeasureCycle < 100 && ls.tempMeasureCycle > (midV ? 4 : 64))
+  // Read out temperature 2 seconds after we started measurement
+  if (ls.tempMeasureCycle < 100 && ls.tempMeasureCycle > (midVoltage ? 4 : 64))
   {
     readTemp();
     ls.tempMeasureCycle += 100;
   }
-  else if (ls.tempMeasureCycle > (midV ? MIDV_TEMP_MEASURE_N_HALFSEC : HIGHV_TEMP_MEASURE_N_32MSEC) + 100)
+  else if (measureIfOldEnough && ls.tempMeasureCycle > (midVoltage ? MIDV_TEMP_MEASURE_N_HALFSEC : HIGHV_TEMP_MEASURE_N_32MSEC) + 100)
+  {
     ls.tempMeasureCycle = 0;
+    startTempConversion();
+  }
   else
+  {
     ++ls.tempMeasureCycle;
+  }
 }
 
 void startupLoop()
@@ -129,10 +130,8 @@ void midVoltageLoop()
     return;
   }
 
-  // Convert temperature periodically; read result 1 second later
-  tempDuty(true);
-
   bool changeAnim = false;
+  bool canMeasureTemp = false;
   if (ls.animIx == 0)
     changeAnim = animVoltage(false);
   else if (ls.animIx == 1)
@@ -148,8 +147,16 @@ void midVoltageLoop()
     as.clear();
     ++ls.animIx;
     if (ls.animIx > 3)
+    {
       ls.animIx = 0;
+      // We start temp converstion when showing voltage
+      // So we'll have a fresh value to show in next phase
+      canMeasureTemp = true;
+    }
   }
+
+  // Convert temperature periodically; read result a bit later
+  tempDuty(true, canMeasureTemp);
 
   sleep(5); // 500 msec
 }
@@ -166,9 +173,8 @@ void highVoltageLoop()
     return;
   }
 
-  tempDuty(false);
-  
   bool changeAnim = false;
+  bool canMeasureTemp = false;
   if (ls.animIx == 0)
     changeAnim = animVoltage(true);
   else if (ls.animIx == 1)
@@ -177,14 +183,14 @@ void highVoltageLoop()
     changeAnim = animTime(true);
   else if (ls.animIx == 3)
     changeAnim = animSmiley(true);
-  else if (ls.animIx == 4)
+  else if (ls.animIx == 4 || ls.animIx == 5)
     changeAnim = animEqualizer();
-  else if (ls.animIx == 5)
+  else if (ls.animIx == 6 || ls.animIx == 7)
+    changeAnim = animEuclidean(true);
+  else if (ls.animIx == 8 || ls.animIx == 9)
+    changeAnim = animEuclidean(false);
+  else if (ls.animIx == 10)
     changeAnim = animLifeGame();
-  else if (ls.animIx == 6)
-    changeAnim = animEuclideanO();
-  else if (ls.animIx == 7)
-    changeAnim = animEuclideanU();
   else
     changeAnim = true;
 
@@ -193,18 +199,19 @@ void highVoltageLoop()
     as.clear();
     // Voltage -> Temp -> Time -> [Random long]
     if (ls.animIx == 2)
-      ls.animIx = 3 + random(5);
+      ls.animIx = random(3, 11);
     else if (ls.animIx < 2)
       ls.animIx += 1;
     else
+    {
       ls.animIx = 0;
+      canMeasureTemp = true;
+    }
   }
+
+  tempDuty(false, canMeasureTemp);
 
   // Sleep 32 msec, increase counters
   sleep(1);
   ++ls.vccMeasureCycle;
 }
-
-// Clock prescaler
-// CLKPR = (1 << CLKPCE);
-// CLKPR = 0x00;

@@ -5,34 +5,7 @@
 #include "vcc.h"
 #include "temp.h"
 
-AnimState as;
-
-AnimState::AnimState()
-{
-  clear();
-}
-
-void AnimState::clear()
-{
-  memset(this, 0, sizeof(AnimState));
-}
-
-bool AnimState::getFlag(uint8_t ix)
-{
-  uint16_t val = flags & (1 << ix);
-  return val != 0;
-}
-
-void AnimState::setFlag(uint8_t ix, bool val)
-{
-  if (val)
-    flags |= (1 << ix);
-  else
-  {
-    uint16_t mask = 0xffff - (1 << ix);
-    flags = flags & mask;
-  }
-}
+extern AnimState as;
 
 void drawVoltage(int16_t val)
 {
@@ -70,12 +43,12 @@ bool animVoltage(bool fast)
   return as.counter >= (fast ? 8 * 32 : 8 * 2);
 }
 
-
 void drawTime(int16_t hours, int16_t mins, bool showColon)
 {
   painter.setDigit(1, hours % 10);
   hours /= 10;
-  if (hours != 0) painter.setDigit(0, hours);
+  if (hours != 0)
+    painter.setDigit(0, hours);
 
   painter.setDigit(3, mins % 10);
   painter.setDigit(2, mins / 10);
@@ -96,7 +69,9 @@ bool animTime(bool fast)
   else
     as.counter++;
 
-  uint16_t totalMinutes = (uint16_t)(msec / 60000);
+  // 60000, but correcting with 1.15 (15%) more real time than measured
+  // => 52174
+  uint16_t totalMinutes = (uint16_t)(msec / 52174);
   uint16_t hours = totalMinutes / 60;
   uint16_t mins = totalMinutes % 60;
   bool colonShown = !as.getFlag(1);
@@ -104,9 +79,9 @@ bool animTime(bool fast)
 
   ht1621.clearBuffer();
   ht1621.setEnabled(true);
-  
+
   drawTime(hours, mins, colonShown);
-  
+
   ht1621.wrBuffer();
 
   // Do this for about 8 seconds
@@ -152,12 +127,11 @@ bool animTemp(bool fast)
   bool degreeShown = !as.getFlag(1);
   as.setFlag(1, degreeShown);
 
-  bool fahrenheit = as.getFlag(2);
-  if (fast && as.counter % (4*32) == 0)
-    as.setFlag(2, !fahrenheit);
-  else if (!fast && as.counter % (4*2) == 0)
-    as.setFlag(2, !fahrenheit);
-
+  bool fahrenheit = false;
+  if (fast && as.counter >= 4 * 32)
+    fahrenheit = true;
+  else if (!fast && as.counter >= 4 * 2)
+    fahrenheit = true;
 
   ht1621.clearBuffer();
   ht1621.setEnabled(true);
@@ -171,12 +145,17 @@ bool animTemp(bool fast)
   return as.counter >= (fast ? 8 * 32 : 8 * 2);
 }
 
+const uint8_t smileyBaseSegs[4] = {
+    SG_BL | SG_BM,
+    SG_TP | SG_TL | SG_TR | SG_MD | SG_BM,
+    SG_TP | SG_TL | SG_TR | SG_MD | SG_BM,
+    SG_BR | SG_BM};
+
 bool animSmiley(bool fast)
 {
   if (as.counter == 0)
   {
-    ht1621.clearBuffer();
-    painter.setImage(Painter::frog);
+    painter.setAllSegs(smileyBaseSegs);
     ht1621.wrBuffer();
   }
   ++as.counter;

@@ -75,32 +75,47 @@ void setChaos(bool active)
   }
 }
 
-uint8_t dmod(uint8_t digitIx)
-{
-  if (digitIx == 255)
-    return 3;
-  else if (digitIx >= 4)
-    return digitIx -= 4;
-  else
-    return digitIx;
-}
+// For each segment (by index), lists its neighbors
+// A neighbor is defined by two values
+// In higher 4 bits: digit offset. Mostly zero, but can be 1 (to the right) or 3 (to the left).
+// In lower 4 bits: index of neighboring segment.
+const uint8_t neighborOffsets[][4] = {
+  {6, 1, 2, 255},
+  {(3<<4) + 2, 0, 3, 4},
+  {0, 3, 5, (1<<4) + 1},
+  {1, 2, 4, 5},
+  {(3<<4) + 5, 1, 3, 6},
+  {3, 2, 6, (1<<4) + 4},
+  {4, 5, 0, 255},
+};
 
 uint8_t countAliveNeighbors(uint8_t digitIx, uint8_t segIx)
 {
-  if (segIx == 0)
-    return painter.getSegIx(digitIx, 6) + painter.getSegIx(digitIx, 1) + painter.getSegIx(digitIx, 2);
-  else if (segIx == 1)
-    return painter.getSegIx(dmod(digitIx - 1), 2) + painter.getSegIx(digitIx, 0) + painter.getSegIx(digitIx, 3) + painter.getSegIx(digitIx, 4);
-  else if (segIx == 2)
-    return painter.getSegIx(digitIx, 0) + painter.getSegIx(digitIx, 3) + painter.getSegIx(digitIx, 5) + painter.getSegIx(dmod(digitIx + 1), 1);
-  else if (segIx == 3)
-    return painter.getSegIx(digitIx, 1) + painter.getSegIx(digitIx, 2) + painter.getSegIx(digitIx, 4) + painter.getSegIx(digitIx, 5);
-  else if (segIx == 4)
-    return painter.getSegIx(dmod(digitIx - 1), 5) + painter.getSegIx(digitIx, 1) + painter.getSegIx(digitIx, 3) + painter.getSegIx(digitIx, 6);
-  else if (segIx == 5)
-    return painter.getSegIx(digitIx, 3) + painter.getSegIx(digitIx, 2) + painter.getSegIx(digitIx, 6) + painter.getSegIx(dmod(digitIx + 1), 4);
-  else
-    return painter.getSegIx(digitIx, 4) + painter.getSegIx(digitIx, 5) + painter.getSegIx(digitIx, 0);
+  uint8_t sum = 0;
+  for (uint8_t i = 0; i < 4; ++i)
+  {
+    uint8_t digitOfs = neighborOffsets[segIx][i];
+    if (digitOfs == 255)
+      continue;
+    uint8_t neighborSegIx = digitOfs & 0x0f;
+    digitOfs >>= 4;
+    sum += painter.getSegIx((digitIx + digitOfs) % 4, neighborSegIx);
+  }
+  return sum;
+  // if (segIx == 0)
+  //   return painter.getSegIx(digitIx, 6) + painter.getSegIx(digitIx, 1) + painter.getSegIx(digitIx, 2);
+  // else if (segIx == 1)
+  //   return painter.getSegIx((digitIx - 1) % 4, 2) + painter.getSegIx(digitIx, 0) + painter.getSegIx(digitIx, 3) + painter.getSegIx(digitIx, 4);
+  // else if (segIx == 2)
+  //   return painter.getSegIx(digitIx, 0) + painter.getSegIx(digitIx, 3) + painter.getSegIx(digitIx, 5) + painter.getSegIx((digitIx + 1) % 4, 1);
+  // else if (segIx == 3)
+  //   return painter.getSegIx(digitIx, 1) + painter.getSegIx(digitIx, 2) + painter.getSegIx(digitIx, 4) + painter.getSegIx(digitIx, 5);
+  // else if (segIx == 4)
+  //   return painter.getSegIx((digitIx - 1) % 4, 5) + painter.getSegIx(digitIx, 1) + painter.getSegIx(digitIx, 3) + painter.getSegIx(digitIx, 6);
+  // else if (segIx == 5)
+  //   return painter.getSegIx(digitIx, 3) + painter.getSegIx(digitIx, 2) + painter.getSegIx(digitIx, 6) + painter.getSegIx((digitIx + 1) % 4, 4);
+  // else
+  //   return painter.getSegIx(digitIx, 4) + painter.getSegIx(digitIx, 5) + painter.getSegIx(digitIx, 0);
 }
 
 void archiveCurrentScreen()
@@ -137,7 +152,7 @@ uint8_t distFromLast(uint8_t *nbuf)
     else
       ix -= 1;
   }
-  return 0xff;
+  return 255;
 }
 
 void stepLifeGame()
@@ -184,6 +199,12 @@ void stepLifeGame()
   memcpy(ht1621.buffer, nbuf, 4);
 }
 
+const uint8_t caosSegs[4] = {
+    SG_TP | SG_TL | SG_BL | SG_BM,
+    SG_TP | SG_TL | SG_TR | SG_MD | SG_BL | SG_BR,
+    SG_TP | SG_TL | SG_TR | SG_BL | SG_BR | SG_BM,
+    SG_TP | SG_TL | SG_MD | SG_BR | SG_BM};
+
 bool animLifeGame()
 {
   // Setup once
@@ -201,12 +222,7 @@ bool animLifeGame()
   {
     ht1621.clearBuffer();
     if ((as.a % 8) < 4)
-    {
-      painter.setSegs(0, SG_TP | SG_TL | SG_BL | SG_BM);
-      painter.setSegs(1, SG_TP | SG_TL | SG_TR | SG_MD | SG_BL | SG_BR);
-      painter.setSegs(2, SG_TP | SG_TL | SG_TR | SG_BL | SG_BR | SG_BM);
-      painter.setSegs(3, SG_TP | SG_TL | SG_MD | SG_BR | SG_BM);
-    }
+      painter.setAllSegs(caosSegs);
     ht1621.wrBuffer();
     --as.a;
     if (as.a > 0)

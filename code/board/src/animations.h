@@ -1,7 +1,7 @@
 #ifndef SHOWS_H
 #define SHOWS_H
 
-#define AS_MEM_SZ 32
+#define AS_MEM_SZ 28
 
 struct AnimState
 {
@@ -27,7 +27,6 @@ bool animTime(bool fast);
 bool animSmiley(bool fast);
 bool animEqualizer();
 bool animLifeGame();
-bool animEuclideanO();
-bool animEuclideanU();
+bool animEuclidean(bool varO);
 
 #endif

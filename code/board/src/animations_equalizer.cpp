@@ -32,10 +32,6 @@ void drawEqualizerBar(const uint8_t *buf, uint8_t segMask)
     }
   }
 
-  // if (segMask == SG_TP) painter.setDigit(0, val);
-  // else if (segMask == SG_MD) painter.setDigit(1, val);
-  // else painter.setDigit(2, val);
-
   if (val > 0) painter.setSegs(0, segMask);
   if (val > 1) painter.setSegs(1, segMask);
   if (val > 2) painter.setSegs(2, segMask);

@@ -1,0 +1,45 @@
+#include <Arduino.h>
+#include "animations.h"
+#include "euclidean.h"
+#include "globals.h"
+
+#define FLAG_SETUP 1
+
+
+bool animEuclideanU()
+{
+  // Setup once
+  if (!as.getFlag(FLAG_SETUP))
+  {
+    setupEuclideanU();
+    as.setFlag(FLAG_SETUP, true);
+  }
+
+  if ((as.counter++ % as.b) != 0)
+    return false;
+
+  // Update value of each track
+  beatEuclideanU();
+
+  // If we're done, return here, before flashing up last screen for 1 frame
+  // Play 8 bars
+  if (as.c >= 8)
+    return true;
+
+  // Visualize
+  ht1621.clearBuffer();
+  uint8_t *ptr;
+  uint8_t i;
+  for (ptr = as.mem, i = 0; i < 4; ++i, ++ptr)
+  {
+    if (*ptr != 0)
+      painter.setSegs(i, SG_BL | SG_BR | SG_BM);
+    uint8_t eighths = (as.a / 2) % 8;
+    bool left = (eighths % 2) == 0;
+    painter.setSegIx(eighths / 2, 0);
+    painter.setSegIx(eighths / 2, left ? 1 : 2);
+  }
+  ht1621.wrBuffer();
+
+  return false;
+}

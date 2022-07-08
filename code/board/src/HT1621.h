@@ -54,7 +54,6 @@ public:
   bool isEnabled();
   void setEnabled(bool enabled);
   void clearBuffer();
-  void wrBufPos(uint8_t ix);
   void wrBuffer();
 };
 
