@@ -20,7 +20,7 @@ LoopState ls;
 typedef bool (*AnimFun)(bool);
 
 #define N_BASIC_FAST_ANIMS 5
-#define N_FAST_ANIMS 11
+#define N_FAST_ANIMS 10
 const AnimFun fastAnimFuns[N_FAST_ANIMS] = { animDay, animVoltage, animTemp, animTime, animPastTime,
   animEuclideanO, animEuclideanO,
   animEuclideanU, animEuclideanU,
@@ -69,7 +69,7 @@ void tempDuty(bool midVoltage, bool measureIfOldEnough)
 
 void startupLoop()
 {
-  // History::reset(true); // DBG
+  // History::reset(false); // DBG
   
   measureVcc();
   ls.lastVcc = vcc;

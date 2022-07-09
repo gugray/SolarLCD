@@ -136,8 +136,12 @@ bool animTime(bool fast)
 
 bool animPastTime(bool fast)
 {
-  bool draw = !fast || as.counter % 32 == 0;
+  bool draw = as.counter % (fast ? 32 : 2) == 0;
   ++as.counter;
+
+  // This takes exactly 6 seconds
+  if (as.counter >= (fast ? 6 * 32 : 6 * 2))
+    return true;
 
   if (draw)
   {
@@ -145,8 +149,8 @@ bool animPastTime(bool fast)
     // 2 seconds: HH:MM
     ht1621.clearBuffer();
     uint8_t secs = as.counter / (fast ? 32 : 2);
-    uint8_t daysAgo = 1 + secs / 3;
-    if (secs % 3 == 0)
+    uint8_t daysAgo = 1 + secs / 2;
+    if (secs % 2 == 0)
     {
       painter.setSegs(0, SG_TR | SG_MD | SG_BL | SG_BR | SG_BM);
       painter.setSegs(1, SG_MD);
@@ -161,9 +165,7 @@ bool animPastTime(bool fast)
     }
     ht1621.wrBuffer();
   }
-
-  // This takes exactly 9 seconds
-  return as.counter >= (fast ? 9 * 32 : 9 * 2);
+  return false;
 }
 
 void drawTemp(uint16_t val, bool degreeShown, bool fahrenheit)
@@ -233,6 +235,7 @@ bool animSmiley(bool fast)
 {
   if (as.counter == 0)
   {
+    ht1621.clearBuffer();
     painter.setAllSegs(smileyBaseSegs);
     ht1621.wrBuffer();
   }

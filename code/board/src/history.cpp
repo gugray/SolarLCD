@@ -45,10 +45,10 @@ void History::newDay()
   ++dayCount;
   EEPROM.put(0, dayCount);
   uint16_t val;
-  for (uint8_t i = 2; i < 8; i += 2)
+  for (uint8_t i = 8; i >= 4; i -= 2)
   {
-    EEPROM.get(i, val);
-    EEPROM.put(i + 2, val);
+    EEPROM.get(i - 2, val);
+    EEPROM.put(i, val);
   }
   EEPROM.put(2, (uint16_t)0);
 }
