@@ -23,7 +23,6 @@ extern AnimState as;
 
 bool animDay(bool fast);
 bool animVoltage(bool fast);
-bool animTemp(bool fast);
 bool animTime(bool fast);
 bool animPastTime(bool fast);
 bool animSmiley(bool fast);

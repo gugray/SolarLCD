@@ -4,7 +4,6 @@
 #include "globals.h"
 #include "sleep.h"
 #include "vcc.h"
-#include "temp.h"
 #include "history.h"
 #include "magic.h"
 
@@ -19,16 +18,16 @@ LoopState ls;
 
 typedef bool (*AnimFun)(bool);
 
-#define N_BASIC_FAST_ANIMS 5
-#define N_FAST_ANIMS 10
-const AnimFun fastAnimFuns[N_FAST_ANIMS] = { animDay, animVoltage, animTemp, animTime, animPastTime,
+#define N_BASIC_FAST_ANIMS 4
+#define N_FAST_ANIMS 9
+const AnimFun fastAnimFuns[N_FAST_ANIMS] = { animDay, animVoltage, animTime, animPastTime,
   animEuclideanO, animEuclideanO,
   animEuclideanU, animEuclideanU,
   animLifeGame
 };
 
-#define N_SLOW_ANIMS 6
-const AnimFun slowAnimFuns[] = {animDay, animVoltage, animTemp, animTime, animPastTime, animSmiley};
+#define N_SLOW_ANIMS 5
+const AnimFun slowAnimFuns[] = {animDay, animVoltage, animTime, animPastTime, animSmiley};
 
 
 void measureVcc()
@@ -43,28 +42,8 @@ void setLoopFun(LoopFun fun)
 {
   currentLoopFun = fun;
   ls.vccMeasureCycle = 1;
-  ls.tempMeasureCycle = 0;
   as.clear();
   ls.animIx = 0;
-}
-
-void tempDuty(bool midVoltage, bool measureIfOldEnough)
-{
-  // Read out temperature 2 seconds after we started measurement
-  if (ls.tempMeasureCycle < 100 && ls.tempMeasureCycle > (midVoltage ? 4 : 64))
-  {
-    readTemp();
-    ls.tempMeasureCycle += 100;
-  }
-  else if (measureIfOldEnough && ls.tempMeasureCycle > (midVoltage ? MIDV_TEMP_MEASURE_N_HALFSEC : HIGHV_TEMP_MEASURE_N_32MSEC) + 100)
-  {
-    ls.tempMeasureCycle = 0;
-    startTempConversion();
-  }
-  else
-  {
-    ++ls.tempMeasureCycle;
-  }
 }
 
 void startupLoop()
@@ -150,7 +129,6 @@ void midVoltageLoop()
     return;
   }
 
-  bool canMeasureTemp = false;
   bool changeAnim = false;
   if (ls.animIx < N_SLOW_ANIMS)
     changeAnim = slowAnimFuns[ls.animIx](false);
@@ -161,16 +139,8 @@ void midVoltageLoop()
     as.clear();
     ++ls.animIx;
     if (ls.animIx >= N_SLOW_ANIMS)
-    {
       ls.animIx = 0;
-      // We start temp converstion when showing voltage
-      // So we'll have a fresh value to show in next phase
-      canMeasureTemp = true;
-    }
   }
-
-  // Convert temperature periodically; read result a bit later
-  tempDuty(true, canMeasureTemp);
 
   sleep(5); // 500 msec
 }
@@ -187,7 +157,6 @@ void highVoltageLoop()
     return;
   }
 
-  bool canMeasureTemp = false;
   bool changeAnim = false;
   if (ls.animIx < N_FAST_ANIMS)
     changeAnim = fastAnimFuns[ls.animIx](true);
@@ -202,13 +171,8 @@ void highVoltageLoop()
     else if (ls.animIx < N_BASIC_FAST_ANIMS - 1)
       ls.animIx += 1;
     else
-    {
       ls.animIx = 0;
-      canMeasureTemp = true;
-    }
   }
-
-  tempDuty(false, canMeasureTemp);
 
   // Sleep 32 msec, increase counters
   sleep(1);
