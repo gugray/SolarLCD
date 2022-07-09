@@ -12,36 +12,40 @@
 
 */
 
-uint16_t dayCount = 0xffff;
+uint16_t dayCount = 0xcdcd;
 
-void History::reset(bool sampleData)
+void History::resetZeros()
 {
-  if (sampleData)
-  {
-    dayCount = 953;
-    EEPROM.put(0, (uint16_t)dayCount);
-    EEPROM.put(2, (uint16_t)72);
-    EEPROM.put(4, (uint16_t)623);
-    EEPROM.put(6, (uint16_t)514);
-    EEPROM.put(8, (uint16_t)590);
-  }
-  else
-  {
-    dayCount = 0;
-    EEPROM.put(0, (uint16_t)dayCount);
-    EEPROM.put(2, (uint16_t)0);
-    EEPROM.put(4, (uint16_t)0);
-    EEPROM.put(6, (uint16_t)0);
-    EEPROM.put(8, (uint16_t)0);
-  }
+  dayCount = 0;
+  EEPROM.put(0, (uint16_t)dayCount);
+  EEPROM.put(2, (uint16_t)0);
+  EEPROM.put(4, (uint16_t)0);
+  EEPROM.put(6, (uint16_t)0);
+  EEPROM.put(8, (uint16_t)0);
+}
+
+void History::resetWithSample()
+{
+  dayCount = 953;
+  EEPROM.put(0, (uint16_t)dayCount);
+  EEPROM.put(2, (uint16_t)72);
+  EEPROM.put(4, (uint16_t)623);
+  EEPROM.put(6, (uint16_t)514);
+  EEPROM.put(8, (uint16_t)590);
 }
 
 void History::newDay()
 {
+  // Get stored day count from EEPROM
+  EEPROM.get(0, dayCount);
+  
+  // If dayCount is 0xffff that means EEPROM is brand new
+  if (dayCount == 0xffff)
+    resetZeros();
+
   // Increase day count
   // Shift previous days to the right
   // Write 0 minutes for today
-  EEPROM.get(0, dayCount);
   ++dayCount;
   EEPROM.put(0, dayCount);
   uint16_t val;

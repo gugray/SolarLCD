@@ -7,7 +7,8 @@ struct History
   static void setActiveMinutes(uint16_t minutesAwake);
   static uint16_t getActiveMinutes(uint8_t daysAgo);
   static uint16_t getDayCount();
-  static void reset(bool sampleData);
+  static void resetZeros();
+  static void resetWithSample();
 };
 
 #endif
