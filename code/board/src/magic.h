@@ -1,12 +1,14 @@
 #ifndef MAGIC_H
 #define MAGIC_H
 
-
-
 #define VCC_HALF_HYSTERESIS   3
 #define MID_VCC_THRESHOLD     328
 #define HIGH_VCC_THRESHOLD    410
 
+// Simplest form of 1.15.
+// To be empirically determined for every unit.
+#define TIME_CORR_NUMERATOR   23
+#define TIME_CORR_DENOMINATOR 20
 
 #ifdef ENV_ATTINY
 #define PIN_CS    4

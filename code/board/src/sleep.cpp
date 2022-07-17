@@ -2,8 +2,24 @@
 #include <avr/sleep.h>
 #include <avr/wdt.h>
 #include "sleep.h"
+#include "magic.h"
 
 volatile uint32_t msec = 0;
+
+uint32_t getCalibratedMsec()
+{
+  return msec * TIME_CORR_NUMERATOR / TIME_CORR_DENOMINATOR;
+}
+
+void setRawMsec(uint32_t val)
+{
+  msec = val;
+}
+
+void addRawMsec(uint32_t val)
+{
+  msec += val;
+}
 
 #ifndef cbi
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))

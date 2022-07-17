@@ -10,6 +10,9 @@ const PROGMEM uint8_t noise1[NOISE_LEN] = { 7, 69, 98, 87, 37, 88, 93, 110 };
 const PROGMEM uint8_t noise2[NOISE_LEN] = { 7, 94, 123, 87, 37, 63, 119, 110 }; 
 const PROGMEM uint8_t noise3[NOISE_LEN] = { 2, 69, 123, 56, 36, 37, 123, 106 }; 
 
+// const PROGMEM uint8_t noise1[NOISE_LEN] = {118, 88, 123, 94, 52, 81, 0, 43 }; 
+// const PROGMEM uint8_t noise2[NOISE_LEN] = {94, 94, 123, 118, 52, 106, 0, 68 }; 
+
 void drawEqualizerBar(const uint8_t *buf, uint8_t segMask)
 {
   uint8_t nVals = NOISE_LEN * 3;

@@ -114,9 +114,7 @@ bool animTime(bool fast)
   else
     as.counter++;
 
-  // 60000, but correcting with 1.15 (15%) more real time than measured
-  // => 52174
-  uint16_t totalMinutes = (uint16_t)(msec / 52174);
+  uint16_t totalMinutes = (uint16_t)(getCalibratedMsec() / 60000);
   uint16_t hours = totalMinutes / 60;
   uint16_t mins = totalMinutes % 60;
   bool colonShown = !as.getFlag(1);

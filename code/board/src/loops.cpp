@@ -10,9 +10,6 @@
 #define LOWV_VCC_MEASURE_N_HALFSEC 1200 // Every 10 minutes
 #define HIGHV_VCC_MEASURE_N_32MSEC 15   // Every 480 msec ~ half sec
 
-#define MIDV_TEMP_MEASURE_N_HALFSEC 240 // Mid-voltage mode: every 2 minutes
-#define HIGHV_TEMP_MEASURE_N_32MSEC 938 // High-voltage mode: every 30 seconds
-
 LoopFun currentLoopFun;
 LoopState ls;
 
@@ -52,14 +49,14 @@ void startupLoop()
   
   measureVcc();
   ls.lastVcc = vcc;
-  msec = 0;
+  setRawMsec(0);
 
   if (vcc < MID_VCC_THRESHOLD)
   {
     setLoopFun(lowVoltageLoop);
     // Large value (7 weeks, but whatever)
     // This way transition to mid-voltage will reset counter to zero
-    msec = (uint32_t)1000 * 60 * 60 * 168;
+    setRawMsec((uint32_t)1000 * 60 * 60 * 168);
   }
   else
   {
@@ -79,6 +76,7 @@ void lowVoltageLoop()
   // If voltage is now above threshold: change mode
   if (vcc > MID_VCC_THRESHOLD + VCC_HALF_HYSTERESIS)
   {
+    uint32_t msec = getCalibratedMsec();
     randomSeed(msec);
     setLoopFun(midVoltageLoop);
     // If msec counter is low-ish (<8 hours), we assume this is a fluctuation within the same day
@@ -101,7 +99,7 @@ void lowVoltageLoop()
     pinMode(PIN_LED, OUTPUT);
     digitalWrite(PIN_LED, LOW);
     delay(8); // Minimum sleep is 16msec. Running MCU is less costly than flash 2x as long
-    msec += 8;
+    addRawMsec(8);
     digitalWrite(PIN_LED, HIGH);
     pinMode(PIN_LED, INPUT);
   }
@@ -118,7 +116,7 @@ void midVoltageLoop()
   // If voltage is now below threshold: change mode
   if (vcc < MID_VCC_THRESHOLD - VCC_HALF_HYSTERESIS)
   {
-    History::setActiveMinutes(msec / 1000 / 60);
+    History::setActiveMinutes(getCalibratedMsec() / 60000);
     setLoopFun(lowVoltageLoop);
     return;
   }
