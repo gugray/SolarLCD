@@ -5,6 +5,10 @@
 #define MID_VCC_THRESHOLD     328
 #define HIGH_VCC_THRESHOLD    410
 
+// It's a new day if creature rises into mid-voltage after at least
+// this number of minutes in low.
+#define NEWDAY_MIN_MINUTES_IN_LOW  240
+
 // Simplest form of 1.15.
 // To be empirically determined for every unit.
 #define TIME_CORR_NUMERATOR   23

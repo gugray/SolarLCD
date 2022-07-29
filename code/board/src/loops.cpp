@@ -49,14 +49,11 @@ void startupLoop()
   
   measureVcc();
   ls.lastVcc = vcc;
-  setRawMsec(0);
+  clearMsec();
 
   if (vcc < MID_VCC_THRESHOLD)
   {
     setLoopFun(lowVoltageLoop);
-    // Large value (7 weeks, but whatever)
-    // This way transition to mid-voltage will reset counter to zero
-    setRawMsec((uint32_t)1000 * 60 * 60 * 168);
   }
   else
   {
@@ -79,12 +76,20 @@ void lowVoltageLoop()
     uint32_t msec = getCalibratedMsec();
     randomSeed(msec);
     setLoopFun(midVoltageLoop);
-    // If msec counter is low-ish (<8 hours), we assume this is a fluctuation within the same day
-    // If the counter is larger (and it starts super large after wake-up), then we reset it here
-    // This also resets counter if voltage dropped to low, but never low enough to reset
-    if (msec > (uint32_t)1000 * 60 * 8)
+
+    // This is a new day if:
+    // -- We haven't sunk into low-voltage mode yet since startup, OR
+    // -- The last time we sank into low-voltage mode has been more than N minutes ago (~240 min)
+    bool newDay = ls.msecSinkIntoLow == 0;
+    if (!newDay)
     {
-      msec = 0;
+      uint32_t msecSinceLastSink = msec - ls.msecSinkIntoLow;
+      if (msecSinceLastSink > (uint32_t)NEWDAY_MIN_MINUTES_IN_LOW * 1000 * 60)
+        newDay = true;
+    }
+    if (newDay)
+    {
+      clearMsec();
       History::newDay();
     }
     return;
@@ -117,6 +122,7 @@ void midVoltageLoop()
   if (vcc < MID_VCC_THRESHOLD - VCC_HALF_HYSTERESIS)
   {
     History::setActiveMinutes(getCalibratedMsec() / 60000);
+    ls.msecSinkIntoLow = getCalibratedMsec();
     setLoopFun(lowVoltageLoop);
     return;
   }

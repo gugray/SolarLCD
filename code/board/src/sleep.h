@@ -5,8 +5,8 @@
 // to roughly compensate for this unit's inaccuracy.
 uint32_t getCalibratedMsec();
 
-// Directly sets raw msec counter.
-void setRawMsec(uint32_t val);
+// Sets msec counter to 0.
+void clearMsec();
 
 // Adds a value to the raw (uncalibrated) msec counter.
 void addRawMsec(uint32_t val);

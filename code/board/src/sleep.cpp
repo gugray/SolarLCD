@@ -11,9 +11,9 @@ uint32_t getCalibratedMsec()
   return msec * TIME_CORR_NUMERATOR / TIME_CORR_DENOMINATOR;
 }
 
-void setRawMsec(uint32_t val)
+void clearMsec()
 {
-  msec = val;
+  msec = 0;
 }
 
 void addRawMsec(uint32_t val)
