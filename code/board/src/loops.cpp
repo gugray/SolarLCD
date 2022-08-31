@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "loops.h"
 #include "animations.h"
+#include "blink_seq.h"
 #include "globals.h"
 #include "sleep.h"
 #include "vcc.h"
@@ -54,6 +55,8 @@ void startupLoop()
   if (vcc < MID_VCC_THRESHOLD)
   {
     setLoopFun(lowVoltageLoop);
+    ht1621.setEnabled(false);
+    initBlinkSeq();
   }
   else
   {
@@ -95,23 +98,16 @@ void lowVoltageLoop()
     return;
   }
 
-  // Screen off!
-  ht1621.setEnabled(false);
-
-  // Blink, unless voltage is growing
-  if (vcc <= ls.lastVcc)
-  {
-    pinMode(PIN_LED, OUTPUT);
-    digitalWrite(PIN_LED, LOW);
-    delay(8); // Minimum sleep is 16msec. Running MCU is less costly than flash 2x as long
-    addRawMsec(8);
-    digitalWrite(PIN_LED, HIGH);
-    pinMode(PIN_LED, INPUT);
+  // If voltage is growing, just sleep
+  if (vcc > ls.lastVcc) {
+    ls.vccMeasureCycle += 8;
+    sleep(8); // 4 sec
   }
-
-  // Sleep
-  ls.vccMeasureCycle += 8;
-  sleep(8); // 4 sec
+  // Otherwise, blink a sequence
+  else
+  {
+    ls.vccMeasureCycle += blinkOneSeq();
+  }
 }
 
 void midVoltageLoop()
@@ -124,6 +120,8 @@ void midVoltageLoop()
     History::setActiveMinutes(getCalibratedMsec() / 60000);
     ls.msecSinkIntoLow = getCalibratedMsec();
     setLoopFun(lowVoltageLoop);
+    ht1621.setEnabled(false);
+    initBlinkSeq();
     return;
   }
   // If voltage is now above high threshold: change mode
