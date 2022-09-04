@@ -36,10 +36,11 @@ void initBlinkSeq()
 uint16_t blinkOneSeq()
 {
   // Play rhythm: 16 beats, 4 beats per second -> 4 seconds
-  for (uint8_t i = 0; i < 16; ++i)
+  uint8_t i;
+  uint16_t mask;
+  for (i = 0, mask = 0x8000; i < 16; ++i, mask >>= 1)
   {
     // Blink here?
-    uint16_t mask = 0x8000 >> i;
     if ((rhythm & mask) != 0)
     {
       pinMode(PIN_LED, OUTPUT);
@@ -57,7 +58,7 @@ uint16_t blinkOneSeq()
   uint8_t sleepyTime = sleepHalfSec;
   // How many two-second sleeps?
   uint8_t twoSecs = sleepyTime / 4;
-  for (uint8_t i = 0; i < twoSecs; ++i)
+  for (i = 0; i < twoSecs; ++i)
     sleep(7);
   // How many one-second sleeps?
   sleepyTime = sleepyTime % 4;

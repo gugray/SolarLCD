@@ -99,7 +99,8 @@ void lowVoltageLoop()
   }
 
   // If voltage is growing, just sleep
-  if (vcc > ls.lastVcc) {
+  if (vcc > ls.lastVcc + VCC_HALF_HYSTERESIS)
+  {
     ls.vccMeasureCycle += 8;
     sleep(8); // 4 sec
   }
