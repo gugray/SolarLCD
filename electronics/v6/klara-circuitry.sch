@@ -91,18 +91,18 @@ Wire Wire Line
 $Comp
 L Regulator_Linear:MCP1700-3302E_TO92 U1
 U 1 1 62AF9A6C
-P 3500 1750
-F 0 "U1" H 3250 1850 50  0000 R CNN
-F 1 "MCP1700-3302E" H 3800 1600 50  0000 R CNN
-F 2 "Package_TO_SOT_THT:TO-92_Inline_Wide" H 3500 1550 50  0001 C CIN
-F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/20001826D.pdf" H 3500 1750 50  0001 C CNN
-	1    3500 1750
+P 3900 1750
+F 0 "U1" H 3650 1850 50  0000 R CNN
+F 1 "MCP1700-3302E" H 4200 1600 50  0000 R CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline_Wide" H 3900 1550 50  0001 C CIN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/20001826D.pdf" H 3900 1750 50  0001 C CNN
+	1    3900 1750
 	1    0    0    1   
 $EndComp
 Wire Wire Line
 	5700 2850 5700 2650
 Wire Wire Line
-	3500 2050 3500 2100
+	3900 2050 3900 2100
 Wire Wire Line
 	5800 2650 5800 2750
 Wire Wire Line
@@ -130,56 +130,49 @@ F 3 "~" H 5900 2300 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 Wire Wire Line
-	4800 1750 5500 1750
-Wire Wire Line
-	3800 1750 3950 1750
+	4200 1750 4350 1750
 $Comp
 L Device:C C2
 U 1 1 62B08E4B
-P 3950 1950
-F 0 "C2" H 4065 1996 50  0000 L CNN
-F 1 "1uF" H 4065 1905 50  0000 L CNN
-F 2 "Capacitor_THT:C_Rect_L7.0mm_W2.0mm_P5.00mm" H 3988 1800 50  0001 C CNN
-F 3 "~" H 3950 1950 50  0001 C CNN
-	1    3950 1950
+P 4350 1950
+F 0 "C2" H 4465 1996 50  0000 L CNN
+F 1 "1uF" H 4465 1905 50  0000 L CNN
+F 2 "Capacitor_THT:C_Rect_L7.0mm_W2.0mm_P5.00mm" H 4388 1800 50  0001 C CNN
+F 3 "~" H 4350 1950 50  0001 C CNN
+	1    4350 1950
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3950 1800 3950 1750
+	4350 1800 4350 1750
 Wire Wire Line
-	3950 2100 3500 2100
-Connection ~ 3500 2100
+	4350 2100 3900 2100
+Connection ~ 3900 2100
 Wire Wire Line
-	3500 2100 3500 3850
+	3900 2100 3900 3850
 $Comp
 L Device:R R2
 U 1 1 62B0AC42
-P 5500 2000
-F 0 "R2" H 5430 2046 50  0000 R CNN
-F 1 "1M" H 5430 1955 50  0000 R CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 5430 2000 50  0001 C CNN
-F 3 "~" H 5500 2000 50  0001 C CNN
-	1    5500 2000
+P 3500 2350
+F 0 "R2" H 3430 2396 50  0000 R CNN
+F 1 "1M" H 3430 2305 50  0000 R CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 3430 2350 50  0001 C CNN
+F 3 "~" H 3500 2350 50  0001 C CNN
+	1    3500 2350
 	-1   0    0    -1  
 $EndComp
 $Comp
 L Device:R R3
 U 1 1 62B0C047
-P 5500 3350
-F 0 "R3" H 5430 3396 50  0000 R CNN
-F 1 "100k" H 5430 3305 50  0000 R CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 5430 3350 50  0001 C CNN
-F 3 "~" H 5500 3350 50  0001 C CNN
-	1    5500 3350
+P 3500 3050
+F 0 "R3" H 3430 3096 50  0000 R CNN
+F 1 "100k" H 3430 3005 50  0000 R CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 3430 3050 50  0001 C CNN
+F 3 "~" H 3500 3050 50  0001 C CNN
+	1    3500 3050
 	-1   0    0    -1  
 $EndComp
 Wire Wire Line
-	5500 1850 5500 1750
-Connection ~ 5500 1750
-Wire Wire Line
 	5400 2850 5500 2850
-Wire Wire Line
-	5500 2850 5500 2150
 Connection ~ 2350 3850
 Wire Wire Line
 	1500 3850 2350 3850
@@ -201,8 +194,6 @@ Wire Wire Line
 Wire Wire Line
 	2250 1750 2350 1750
 Connection ~ 2350 1750
-Wire Wire Line
-	5500 1750 5900 1750
 Wire Wire Line
 	5900 1850 5900 1750
 Wire Wire Line
@@ -259,8 +250,6 @@ Wire Wire Line
 	2950 3050 3150 3050
 Connection ~ 2950 3850
 Wire Wire Line
-	2950 3850 3500 3850
-Wire Wire Line
 	2950 2450 2950 1750
 Wire Wire Line
 	2350 1750 2950 1750
@@ -268,8 +257,6 @@ Connection ~ 2950 2450
 Wire Wire Line
 	2950 2450 3150 2450
 Connection ~ 2950 1750
-Wire Wire Line
-	2950 1750 3200 1750
 Wire Wire Line
 	6850 3850 7450 3850
 Connection ~ 6850 3850
@@ -284,16 +271,6 @@ Wire Wire Line
 Wire Wire Line
 	6850 1750 7450 1750
 Connection ~ 6850 1750
-Wire Wire Line
-	4800 3850 5500 3850
-Wire Wire Line
-	5500 2850 5500 3200
-Connection ~ 5500 2850
-Wire Wire Line
-	5500 3500 5500 3850
-Connection ~ 5500 3850
-Wire Wire Line
-	5500 3850 6850 3850
 $Comp
 L MCU_Microchip_ATtiny:ATtiny85-20PU U3
 U 1 1 62A64AD0
@@ -333,12 +310,9 @@ Wire Wire Line
 Wire Wire Line
 	5900 1750 6850 1750
 Wire Wire Line
-	3950 1750 4800 1750
-Connection ~ 3950 1750
+	4350 1750 4800 1750
+Connection ~ 4350 1750
 Connection ~ 4800 1750
-Wire Wire Line
-	3500 3850 4800 3850
-Connection ~ 3500 3850
 Connection ~ 4800 3850
 $Comp
 L Connector_Generic:Conn_01x05 J1
@@ -357,4 +331,38 @@ Wire Wire Line
 	7450 1750 7450 2450
 NoConn ~ 7450 2550
 NoConn ~ 7450 2750
+Connection ~ 3900 3850
+Wire Wire Line
+	3900 3850 4800 3850
+Wire Wire Line
+	2950 3850 3500 3850
+Wire Wire Line
+	4800 1750 5900 1750
+Wire Wire Line
+	4800 3850 6850 3850
+Wire Wire Line
+	2950 1750 3500 1750
+Wire Wire Line
+	3500 2200 3500 1750
+Connection ~ 3500 1750
+Wire Wire Line
+	3500 1750 3600 1750
+Wire Wire Line
+	3500 2500 3500 2700
+Wire Wire Line
+	3500 3200 3500 3850
+Connection ~ 3500 3850
+Wire Wire Line
+	3500 3850 3900 3850
+Wire Wire Line
+	5500 3650 3750 3650
+Wire Wire Line
+	3750 3650 3750 2700
+Wire Wire Line
+	3750 2700 3500 2700
+Wire Wire Line
+	5500 2850 5500 3650
+Connection ~ 3500 2700
+Wire Wire Line
+	3500 2700 3500 2900
 $EndSCHEMATC
