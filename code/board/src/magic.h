@@ -9,10 +9,11 @@
 // this number of minutes in low.
 #define NEWDAY_MIN_MINUTES_IN_LOW  240
 
-// Simplest form of 1.15.
 // To be empirically determined for every unit.
-#define TIME_CORR_NUMERATOR   23
-#define TIME_CORR_DENOMINATOR 20
+// First large unit: 23/20
+// First small unit: 1/1
+#define TIME_CORR_NUMERATOR   1
+#define TIME_CORR_DENOMINATOR 1
 
 #ifdef ENV_ATTINY
 #define PIN_CS    4
