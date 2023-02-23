@@ -21,16 +21,23 @@ void addRhythm(uint8_t nBeats, uint8_t ofs)
 
 void initBlinkSeq()
 {
-  rhythm = 0;
-  addRhythm(random(1, 4), random(0, 4));
-  addRhythm(random(1, 4), random(0, 4));
-  uint8_t nBlinks = 0;
-  for (uint16_t mask = 0x8000; mask != 0; mask >>= 1)
+  // Make sure we generate a sequence that has at least one blink
+  while (true)
   {
-    if ((rhythm & mask) != 0)
-      ++nBlinks;
+    rhythm = 0;
+    addRhythm(random(1, 4), random(0, 4));
+    addRhythm(random(1, 4), random(0, 4));
+    if (rhythm == 0)
+      continue;
+    uint8_t nBlinks = 0;
+    for (uint16_t mask = 0x8000; mask != 0; mask >>= 1)
+    {
+      if ((rhythm & mask) != 0)
+        ++nBlinks;
+    }
+    sleepHalfSec = 4 + nBlinks * 3 / 2;
+    break;
   }
-  sleepHalfSec = 4 + nBlinks * 3 / 2;
 }
 
 uint16_t blinkOneSeq()

@@ -56,7 +56,6 @@ void startupLoop()
   {
     setLoopFun(lowVoltageLoop);
     ht1621.setEnabled(false);
-    initBlinkSeq();
   }
   else
   {
@@ -66,6 +65,7 @@ void startupLoop()
     else
       setLoopFun(highVoltageLoop);
   }
+  initBlinkSeq();
 }
 
 void lowVoltageLoop()
