@@ -1,4 +1,0 @@
-
-(fp_lib_table
-  (lib (name "board-shenzhen")(type KiCad)(uri "$(KIPRJMOD)/board-shenzhen.pretty")(options "")(descr ""))
-)
